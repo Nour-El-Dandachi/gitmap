@@ -29,14 +29,16 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/app:delegated
     working_dir: /app
     command: npm start
     stdin_open: true
     tty: true
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      - FAST_REFRESH=false
+
 
   db:
     image: postgres:15
