@@ -25,6 +25,16 @@ class AuthController extends Controller
     }
 
     public function register(Request $request){
-        
+        try {
+            $user = AuthService::register($request);
+
+            if ($user) {
+                return $this->responseJSON($user);
+            }
+
+            return $this->responseJSON(null, "Registration failed.", 400);
+        } catch (Exception $e) {
+            return $this->responseJSON(null, "Server error during registration.", 500);
+        }
     }
 }
