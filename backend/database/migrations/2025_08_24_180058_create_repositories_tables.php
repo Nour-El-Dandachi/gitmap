@@ -31,6 +31,13 @@ return new class extends Migration
             $table->unsignedInteger('size')->nullable();
             $table->timestamps();
         });
+
+        Schema::create('file_contents', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('repo_file_id')->constrained()->onDelete('cascade');
+            $table->longText('content');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -40,5 +47,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('repositories');
         Schema::dropIfExists('repo_files');
+        Schema::dropIfExists('file_contents');
     }
 };
