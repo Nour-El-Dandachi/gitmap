@@ -21,6 +21,16 @@ return new class extends Migration
             $table->json('metadata')->nullable();
             $table->timestamps();
         });
+
+        Schema::create('repo_files', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('repository_id')->constrained()->onDelete('cascade');
+            $table->string('path');
+            $table->string('type');
+            $table->string('sha');
+            $table->unsignedInteger('size')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -29,5 +39,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('repositories');
+        Schema::dropIfExists('repo_files');
     }
 };
