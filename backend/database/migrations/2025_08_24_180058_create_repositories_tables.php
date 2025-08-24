@@ -11,8 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('repositories_tables', function (Blueprint $table) {
+        Schema::create('repositories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('owner');
+            $table->string('name');
+            $table->string('branch')->default('main');
+            $table->string('url');
+            $table->json('metadata')->nullable();
             $table->timestamps();
         });
     }
@@ -22,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('repositories_tables');
+        Schema::dropIfExists('repositories');
     }
 };
