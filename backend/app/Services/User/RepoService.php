@@ -2,13 +2,21 @@
 
 namespace App\Services\User;
 
-class RepoService
-{
-    /**
-     * Create a new class instance.
-     */
-    public function __construct()
-    {
-        //
+class RepoService{
+    
+    public static function fetchTree($url){
+
+
+    }
+
+    public function parseRepoURL($url){
+        
+        $parts = parse_url($url);
+        $data = explode('/', trim($parts['path'], '/'));
+
+        return [
+            'owner' => $data[0] ?? null,
+            'repo' => $data[1] ?? null,
+        ];
     }
 }
