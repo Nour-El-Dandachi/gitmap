@@ -13,10 +13,12 @@ class RepoService{
         
         $parts = parse_url($url);
         $data = explode('/', trim($parts['path'], '/'));
-
-        return [
+        
+        $parsed = [
             'owner' => $data[0] ?? null,
-            'repo' => $data[1] ?? null,
+            'repo' => $data[1] ?? null
         ];
+
+        return $parsed;
     }
 }
