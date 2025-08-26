@@ -5,7 +5,7 @@ import './login.css';
 const Login = () => {
     return (
         <div>
-            Login page
+            <Input hint={"email"} icon={"mail"}/>
         </div>
     );
 }
