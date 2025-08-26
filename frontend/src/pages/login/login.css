@@ -1,0 +1,5 @@
+.login-page{
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+}

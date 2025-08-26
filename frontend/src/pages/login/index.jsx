@@ -4,8 +4,9 @@ import './login.css';
 
 const Login = () => {
     return (
-        <div>
+        <div className="login-page">
             <Input hint={"email"} icon={"mail"}/>
+            <Input hint={"password"} icon={"lock"}/>
         </div>
     );
 }
