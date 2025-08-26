@@ -1,0 +1,4 @@
+.login-left-side{
+    display: flex;
+    flex-direction: column;
+}

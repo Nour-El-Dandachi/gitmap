@@ -3,8 +3,10 @@ import './left-side.css';
 
 const LeftSide = () => {
     return (
-        <div>
-            LeftSide
+        <div className="login-left-side">
+            <div className="login-logo">
+                
+            </div>
         </div>
     );
 }
