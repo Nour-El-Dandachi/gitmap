@@ -1,12 +1,12 @@
 import React from "react";
 import Input from "../../components/shared/input";
+import LeftSide from "../../components/login/left-side";
 import './login.css';
 
 const Login = () => {
     return (
         <div className="login-page">
-            <Input hint={"email"} icon={"mail"}/>
-            <Input hint={"password"} icon={"lock"}/>
+            <LeftSide />
         </div>
     );
 }
