@@ -2,14 +2,22 @@ import React from "react";
 import GithubButton from "../../shared/github-btn";
 import Input from "../../shared/input";
 import "./left-side.css";
-import { icons } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 
 const LeftSide = () => {
+    const navigate = useNavigate();
+
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [error, setError] = useState("");
+
   return (
     <div className="login-left-side">
       <div className="login-logo"></div>
       <div className="login-form">
-        <h1>Welome back to gitmap!</h1>
+        <h1>Welcome back to gitmap!</h1>
         <GithubButton location={"login"} />
         <div className="divider">
           <span>OR</span>
@@ -19,6 +27,20 @@ const LeftSide = () => {
           <Input hint={"Email"} icon={"mail"} />
           <Input hint={"Password"} icon={"lock"} />
         </div>
+
+        <button className="login-btn">Log in</button>
+        <p className="under-btn-txt">
+          Already have an account?{" "}
+          <button
+            className="signup-link"
+            onClick={() => {
+              navigate("/register");
+            }}
+          >
+            Sign up
+          </button>
+          {error && <p className="form-error">{error}</p>}
+        </p>
       </div>
     </div>
   );
