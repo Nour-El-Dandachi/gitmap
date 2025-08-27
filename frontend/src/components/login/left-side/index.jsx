@@ -1,5 +1,7 @@
 import React from "react";
+import GithubButton from "../../shared/github-btn";
 import './left-side.css';
+
 
 const LeftSide = () => {
     return (
