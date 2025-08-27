@@ -11,7 +11,7 @@ const LeftSide = () => {
             </div>
             <div className="login-form">
                 <h1>Welome back to gitmap!</h1>
-                <GithubButton />
+                <GithubButton location={"login"} />
             </div>
         </div>
     );
