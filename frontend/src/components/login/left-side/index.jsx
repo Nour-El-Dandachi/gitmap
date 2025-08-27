@@ -1,6 +1,8 @@
 import React from "react";
 import GithubButton from "../../shared/github-btn";
+import Input from "../../shared/input";
 import "./left-side.css";
+import { icons } from "lucide-react";
 
 const LeftSide = () => {
   return (
@@ -12,7 +14,11 @@ const LeftSide = () => {
         <div className="divider">
           <span>OR</span>
         </div>
-        
+
+        <div className="login-inputs">
+          <Input hint={"Email"} icon={"mail"} />
+          <Input hint={"Password"} icon={"lock"} />
+        </div>
       </div>
     </div>
   );
