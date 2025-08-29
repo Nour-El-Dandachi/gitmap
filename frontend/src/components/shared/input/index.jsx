@@ -1,5 +1,5 @@
 import React from "react";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, UserRound } from "lucide-react";
 import "./input.css";
 
 const Input = ({ type, name, hint, onChange, icon, value }) => {
@@ -8,6 +8,9 @@ const Input = ({ type, name, hint, onChange, icon, value }) => {
       return <Lock className="icon" color="#131325" />;
     } else if (icon === "mail") {
       return <Mail className="icon" color="#131325" />;
+    }
+    else{
+      return <UserRound className="icon" color="#131325" />;
     }
   };
   return (

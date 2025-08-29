@@ -4,6 +4,7 @@ import Input from "../../shared/input";
 import "./left-side.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import gitmapLogo from "../../../assets/logos/gitmap_2.png";
 
 
 const LeftSide = () => {
@@ -15,7 +16,7 @@ const LeftSide = () => {
 
   return (
     <div className="login-left-side">
-      <div className="login-logo"></div>
+      <div className="login-logo"><img src={gitmapLogo}></img></div>
       <div className="login-form">
         <h1>Welcome back to gitmap!</h1>
         <GithubButton location={"login"} />
@@ -30,7 +31,7 @@ const LeftSide = () => {
 
         <button className="login-btn">Log in</button>
         <p className="under-btn-txt">
-          Already have an account?{" "}
+          Don't have an account?{" "}
           <button
             className="signup-link"
             onClick={() => {
