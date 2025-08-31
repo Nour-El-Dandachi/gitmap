@@ -53,6 +53,9 @@ INSTALLED_APPS = [
 
     'users',
     'repositories',
+    'notifications',
+    'chat',
+    'indexing',
 ]
 
 MIDDLEWARE = [
