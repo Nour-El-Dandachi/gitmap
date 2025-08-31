@@ -2,8 +2,20 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from rest_framework.authtoken.models import Token
 from .serializers import UserRegisterSerializer
+from utils.response import responseJSON
+from rest_framework_simplejwt.tokens import RefreshToken
+
+def get_custom_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+    refresh["name"] = user.name
+    refresh["email"] = user.email
+    refresh["role"] = user.role
+
+    return {
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+    }
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -12,12 +24,11 @@ class RegisterView(APIView):
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            
-            token, created = Token.objects.get_or_create(user=user)
+            tokens = get_custom_tokens_for_user(user)
 
-            return Response({
+            return responseJSON({
                 "message": "User created successfully",
-                "token": token.key
-            }, status=status.HTTP_201_CREATED)
+                "tokens": tokens
+            })
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return responseJSON({"error": "Invalid credentials"}, status="error", status_code=400)
