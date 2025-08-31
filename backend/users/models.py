@@ -18,7 +18,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     github_id = models.CharField(max_length=255, null=True, blank=True, unique=True)
     github_login = models.CharField(max_length=255, null=True, blank=True)

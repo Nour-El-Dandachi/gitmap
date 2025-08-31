@@ -58,6 +58,9 @@ INSTALLED_APPS = [
     'notifications',
     'chat',
     'indexing',
+    
+    'social_django',
+
 ]
 
 MIDDLEWARE = [
@@ -168,3 +171,13 @@ SIMPLE_JWT = {
 
 
 AUTH_USER_MODEL = 'users.User'
+
+SOCIAL_AUTH_GITHUB_KEY = os.getenv("GITHUB_CLIENT_ID")
+SOCIAL_AUTH_GITHUB_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
