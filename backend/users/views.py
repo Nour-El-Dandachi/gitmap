@@ -3,19 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from .serializers import UserRegisterSerializer
+from .serializers import UserLoginSerializer
 from utils.response import responseJSON
-from rest_framework_simplejwt.tokens import RefreshToken
-
-def get_custom_tokens_for_user(user):
-    refresh = RefreshToken.for_user(user)
-    refresh["name"] = user.name
-    refresh["email"] = user.email
-    refresh["role"] = user.role
-
-    return {
-        "refresh": str(refresh),
-        "access": str(refresh.access_token),
-    }
+from utils.tokens import get_custom_tokens_for_user
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -32,3 +22,20 @@ class RegisterView(APIView):
             })
 
         return responseJSON({"error": "Invalid credentials"}, status="error", status_code=400)
+
+
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = UserLoginSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            user = serializer.validated_data["user"]
+            tokens = get_custom_tokens_for_user(user)
+
+            return responseJSON({
+                "message": "Login successful",
+                "tokens": tokens
+            })
+
+        return responseJSON(serializer.errors, status="error", status_code=400)
