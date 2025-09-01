@@ -15,15 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from users import views as user_views
-from django.urls import path
-from django.urls import include
+from django.urls import path, include
 
+from users.views.github_views import github_redirect, github_callback
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/users/', include('users.urls')),
     
-    path('auth/github/redirect/', user_views.github_redirect),
-    path('auth/github/callback/', user_views.github_callback, name='github_callback'),
+    path('auth/github/redirect/', github_redirect),
+    path('auth/github/callback/', github_callback, name='github_callback'),
+    
+    path('api/users/', include('users.urls')),
 ]
