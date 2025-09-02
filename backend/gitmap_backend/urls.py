@@ -27,4 +27,6 @@ urlpatterns = [
     
     path('api/users/', include('users.urls')),
     path("api/repos/", include("repositories.urls")),
+    
+    path("api/notifications/", include("notifications.urls")),
 ]
