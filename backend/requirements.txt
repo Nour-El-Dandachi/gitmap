@@ -1,0 +1,7 @@
+Django>=5.2
+djangorestframework
+python-dotenv
+django-cors-headers
+psycopg2-binary
+social-auth-app-django
+djangorestframework-simplejwt

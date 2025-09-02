@@ -11,4 +11,7 @@
 .input-wrapper input {
   margin: 0;
   border: none;
+  outline: none; 
+  box-shadow: none;
 }
+

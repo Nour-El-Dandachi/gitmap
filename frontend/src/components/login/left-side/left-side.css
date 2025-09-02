@@ -1,4 +1,102 @@
-.login-left-side{
-    display: flex;
-    flex-direction: column;
+.login-left-side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: white;
+  width: 60%;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.login-logo {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.login-logo img {
+  width: 80px;
+  height: 80px;
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 450px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  width: 100%;
+  justify-content: center;
+  position: relative;
+  background-color: white;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ccc;
+  height: 1px;
+}
+
+.divider span {
+  display: inline-block;
+  padding: 0 0.75em;
+  font-size: 0.875rem;
+  color: #676666;
+  background-color: white;
+  z-index: 1;
+}
+
+
+
+
+.login-inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  width: 80%;
+}
+
+
+.login-btn {
+  text-align: center;
+  all: unset;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  background-color: #948BFC;
+  padding: 0.5rem;
+  padding-left: 3.5rem;
+  padding-right: 3.5rem;
+  border-radius: 5px;
+  margin-top: 1.5rem;
+  width: 60%;
+  justify-content: center;
+}
+
+.under-btn-txt {
+  color: #a5a5a5;
+  font-size: 12px;
+  margin-top: 0.5rem;
+}
+
+.signup-link {
+  all: unset;
+  cursor: pointer;
+  color: #131325;
 }
