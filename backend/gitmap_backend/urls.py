@@ -26,4 +26,5 @@ urlpatterns = [
     path('auth/github/callback/', github_callback, name='github_callback'),
     
     path('api/users/', include('users.urls')),
+    path("api/repos/", include("repositories.urls")),
 ]
