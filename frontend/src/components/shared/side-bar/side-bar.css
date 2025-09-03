@@ -1,0 +1,100 @@
+.side-bar {
+  width: 15%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: start;
+  padding: 10px;
+  border-right: 1px solid rgb(160, 159, 159);
+}
+
+.bar-profile {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid black;
+  display: flex;
+  align-items:center ;
+  justify-content: center;
+}
+
+.profile-name{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-search{
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+  background-color: rgb(206, 206, 206);
+  padding: 0.7rem 0.5rem;
+  width: 85%;
+  border-radius: 5px;
+
+}
+
+
+.search-input{
+  background-color: rgb(206, 206, 206);
+  margin: 0;
+  border: none;
+  outline: none; 
+}
+
+.bar-menu{
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 85%;
+}
+
+.menu-dashboard{
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+  background-color: #d1cefb;
+  padding: 0.7rem 0.5rem;
+  width: 100%;
+  border-radius: 5px;
+}
+
+.menu-repositories{
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+
+  padding: 0.7rem 0.5rem;
+  width: 100%;
+  border-radius: 5px;
+}
+
+.menu-notifications{
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+
+  padding: 0.7rem 0.5rem;
+  width: 100%;
+  border-radius: 5px;
+}
