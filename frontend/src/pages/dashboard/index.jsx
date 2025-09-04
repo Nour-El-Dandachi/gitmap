@@ -3,6 +3,7 @@ import './dashboard.css';
 import SideBar from "../../components/shared/side-bar";
 import Header from "../../components/shared/header";
 import AddBox from "../../components/dashboard/add-box";
+import RepositoryBox from "../../components/shared/repository-box";
 
 const Dashboard = () => {
     return (
@@ -19,7 +20,22 @@ const Dashboard = () => {
                </div>
 
                <div className="repositories">
-                
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
+                    <RepositoryBox />
                </div>
                </div>
             </div>
