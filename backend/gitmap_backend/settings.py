@@ -25,6 +25,8 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -179,5 +181,11 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
+
+
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
 
 

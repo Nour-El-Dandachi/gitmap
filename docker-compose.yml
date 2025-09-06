@@ -8,6 +8,7 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
+      - ./backend/bge-m3:/app/bge-m3
     working_dir: /app
     depends_on:
       - db
@@ -64,6 +65,33 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     depends_on:
       - db
+    
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+  
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gitmap-celery
+    command: celery -A gitmap_backend worker --loglevel=info
+    volumes:
+      - ./backend:/app
+      - ./backend/bge-m3:/app/bge-m3
+    working_dir: /app
+    depends_on:
+      - backend
+      - redis
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: gitmap
+      DB_USER: gitmap_user
+      DB_PASSWORD: gitmap_pass
+
+
 
 volumes:
   pg_data:
