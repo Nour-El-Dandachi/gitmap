@@ -11,6 +11,8 @@ from django.conf import settings
 from repositories.models import Repository, RepoFile
 from indexing.models import IndexingJob
 from django.db.models import Q
+from repositories.tasks import embed_repository_task
+
 
 GITHUB_API_BASE = "https://api.github.com"
 
@@ -133,6 +135,9 @@ class RepoService:
 
         repo.index_status = "folders_selected"
         repo.save()
+
+        embed_repository_task.delay(repo.id)
+
 
         return repo
 
