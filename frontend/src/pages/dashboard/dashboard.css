@@ -1,0 +1,22 @@
+.dashboard-page{
+    display: flex;
+    flex-direction: row;
+}
+
+.dashboard-right{
+    width: 90%;
+}
+.recently-viewed-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    padding: 2rem;
+}
+.repositories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  padding: 1rem;
+  padding-left: 2rem;
+}

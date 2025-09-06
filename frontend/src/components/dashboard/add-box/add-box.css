@@ -1,0 +1,21 @@
+.add-box{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid rgb(160, 159, 159);
+    align-items: center;
+    justify-content: start;
+}
+
+.url-box{
+    display: flex;
+    background-color: #d1cefb;
+    width: 80%;
+    height: 50px;
+    border-radius: 5px;
+    align-items: center;
+    text-align: start;
+    padding-left: 2rem;
+}
