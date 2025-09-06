@@ -25,6 +25,8 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 
 
 # Quick-start development settings - unsuitable for production
