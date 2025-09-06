@@ -29,4 +29,5 @@ urlpatterns = [
     path("api/repos/", include("repositories.urls")),
     
     path("api/notifications/", include("notifications.urls")),
+    path("api/chat/", include("chat.urls")),
 ]
