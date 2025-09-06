@@ -65,13 +65,22 @@ class RepoService:
         response = requests.get(url, headers=HEADERS)
 
         if response.status_code != 200:
-            raise Exception("Failed to fetch file content")
+            raise Exception(f"Failed to fetch file content: {response.status_code} - {response.text}")
 
         data = response.json()
-        decoded = base64.b64decode(data["content"]).decode("utf-8")
+
+        if data.get("encoding") != "base64":
+            raise Exception("Blob encoding is not base64")
+
+        if "content" not in data:
+            raise Exception("Content not found in blob response")
+
+        try:
+            decoded = base64.b64decode(data["content"]).decode("utf-8", errors="ignore")
+        except Exception as e:
+            raise Exception(f"Decoding failed for SHA {sha}: {str(e)}")
 
         return {
-            "filename": data.get("path", "unknown"),
             "content": decoded
         }
 
