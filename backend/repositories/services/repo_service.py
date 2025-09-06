@@ -1,6 +1,9 @@
 import requests
 from urllib.parse import urlparse
 import base64
+from repositories.models import Repository
+from indexing.models import IndexingJob
+from django.utils import timezone
 
 GITHUB_API_BASE = "https://api.github.com"
 
@@ -56,3 +59,45 @@ class RepoService:
             "filename": data.get("path", "unknown"),
             "content": decoded
         }
+
+    @staticmethod
+    def start_indexing_workflow(user, url, branch):
+        parsed = RepoService.parse_repo_url(url)
+        owner, repo_name = parsed["owner"], parsed["repo"]
+
+        if not owner or not repo_name:
+            raise ValueError("Invalid GitHub repository URL")
+
+        repo_url = f"{GITHUB_API_BASE}/repos/{owner}/{repo_name}"
+        response = requests.get(repo_url, headers=HEADERS)
+
+        if response.status_code != 200:
+            raise ValueError("GitHub repository not found")
+
+        repo_metadata = response.json()
+        default_branch = repo_metadata.get("default_branch", branch)
+        description = repo_metadata.get("description", "")
+        stars = repo_metadata.get("stargazers_count", 0)
+
+        repo = Repository.objects.create(
+            user=user,
+            owner=owner,
+            name=repo_name,
+            url=url,
+            branch=branch,
+            default_branch=default_branch,
+            is_watched=True,
+            is_indexed=False,
+            index_status="pending",
+            metadata={
+                "description": description,
+                "stars": stars
+            }
+        )
+
+        IndexingJob.objects.create(
+            repository=repo,
+            status="pending"
+        )
+
+        return repo
