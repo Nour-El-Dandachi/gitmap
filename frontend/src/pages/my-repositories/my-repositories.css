@@ -1,0 +1,12 @@
+.repo-search{
+    display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+  background-color: rgb(206, 206, 206);
+  padding: 0.7rem 0.5rem;
+  width: 40%;
+  border-radius: 5px;
+  margin: 1rem 2rem;
+}
