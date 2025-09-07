@@ -189,3 +189,6 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 
 
+
+
+BGE_M3_MODEL_PATH = os.getenv("BGE_M3_MODEL_PATH", "/app/bge-m3")
