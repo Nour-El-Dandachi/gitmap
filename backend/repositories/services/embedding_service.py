@@ -9,7 +9,7 @@ class EmbeddingService:
     def embed_repository(repo, embed_fn):
         from repositories.services.repo_service import RepoService
 
-        print(f"🔍 Starting embedding for repo: {repo.name}")
+        print(f"Starting embedding for repo: {repo.name}")
 
         indexed_files = RepoFile.objects.filter(repository=repo, is_indexed=True)
 
@@ -50,7 +50,7 @@ class EmbeddingService:
                         embedding=embedding,
                         model_used="bge-m3",
                     )
-                    print(f"🧠 Embedded and saved chunk {i} for {file.path}")
+                    print(f"Embedded and saved chunk {i} for {file.path}")
 
             except Exception as e:
                 print(f"Failed to process {file.path}: {e}")
