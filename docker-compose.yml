@@ -90,7 +90,14 @@ services:
       DB_NAME: gitmap
       DB_USER: gitmap_user
       DB_PASSWORD: gitmap_pass
-
+  
+  n8n:
+    image: n8nio/n8n
+    container_name: gitmap-n8n
+    ports:
+      - "5678:5678"
+    volumes:
+      - ./n8n_data:/home/node/.n8n
 
 
 volumes:
