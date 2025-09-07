@@ -6,9 +6,13 @@ from rest_framework.permissions import IsAuthenticated
 from notifications.services.notification_service import NotificationService
 from notifications.serializers.notification_serializer import NotificationSerializer
 from utils.response import responseJSON
+from rest_framework.permissions import AllowAny 
+
+from repositories.models import Repository
+from rest_framework.response import Response
 
 class NotificationListCreateView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny] 
 
     def get(self, request):
         notifications = NotificationService.list_for_user(request.user)
@@ -19,7 +23,7 @@ class NotificationListCreateView(APIView):
         serializer = NotificationSerializer(data=request.data)
         if serializer.is_valid():
             notification = NotificationService.create(
-                user=request.user,
+                user=serializer.validated_data['user'],
                 title=serializer.validated_data['title'],
                 message=serializer.validated_data['message']
             )
@@ -54,3 +58,25 @@ class MarkAllAsReadView(APIView):
     def post(self, request):
         NotificationService.mark_all_as_read(request.user)
         return responseJSON({"detail": "All notifications marked as read."})
+
+
+class WatchedReposSummaryView(APIView):
+    permission_classes = []
+
+    def get(self, request):
+        repos = Repository.objects.filter(is_watched=True).select_related("user")
+        result = {}
+
+        for repo in repos:
+            user_id = repo.user.id
+            if user_id not in result:
+                result[user_id] = []
+
+            result[user_id].append({
+                "repo_id": repo.id,
+                "repo": f"{repo.owner}/{repo.name}",
+                "branch": repo.branch or repo.default_branch or "main",
+                "last_sha": (repo.metadata or {}).get("last_sha", "")
+            })
+
+        return responseJSON(result)
