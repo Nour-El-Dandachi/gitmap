@@ -201,7 +201,17 @@ class RepoService:
                 )
 
         repo.is_indexed = False
+
+        try:
+            latest_sha = RepoService.get_latest_commit_sha(owner, name, branch)
+            repo.metadata = repo.metadata or {}
+            repo.metadata["last_sha"] = latest_sha
+        except Exception as e:
+            print(f"[WARNING] Could not fetch initial SHA: {e}")
+
+        repo.save()
         return folders
+
 
     @staticmethod
     def ask_ai_for_folders(repo_name, description, languages, folders):
@@ -236,3 +246,19 @@ class RepoService:
         except Exception as e:
             print("AI folder selection failed:", e)
             return []
+
+    @staticmethod
+    def get_latest_commit_sha(owner: str, repo: str, branch: str = "main"):
+        url = f"{GITHUB_API_BASE}/repos/{owner}/{repo}/commits"
+        params = {"sha": branch, "per_page": 1}
+        response = requests.get(url, headers=HEADERS, params=params)
+
+        if response.status_code != 200:
+            raise Exception(f"Failed to fetch commits: {response.status_code} - {response.text}")
+
+        data = response.json()
+
+        if not isinstance(data, list) or len(data) == 0:
+            raise Exception("No commits found in GitHub response.")
+
+        return data[0]["sha"]

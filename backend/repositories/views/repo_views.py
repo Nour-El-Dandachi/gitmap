@@ -58,3 +58,37 @@ class AddRepositoryView(APIView):
             return responseJSON({"error": str(e)}, status="error", status_code=400)
         except Exception as e:
             return responseJSON({"error": str(e)}, status="error", status_code=500)
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from repositories.models import Repository
+from utils.response import responseJSON
+
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from repositories.models import Repository
+from utils.response import responseJSON
+
+class UpdateLastShaView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        repo_id = request.data.get("repo_id")
+        new_sha = request.data.get("new_sha")
+
+        if not repo_id or not new_sha:
+            return responseJSON({"error": "Missing parameters"}, status="error", status_code=400)
+
+        try:
+            repo = Repository.objects.get(id=repo_id)
+        except Repository.DoesNotExist:
+            return responseJSON({"error": "Repository not found"}, status="error", status_code=404)
+
+        metadata = repo.metadata or {}
+        metadata["last_sha"] = new_sha
+        repo.metadata = metadata
+        repo.save(update_fields=["metadata"])
+
+        return responseJSON({"message": "last_sha updated successfully"})
