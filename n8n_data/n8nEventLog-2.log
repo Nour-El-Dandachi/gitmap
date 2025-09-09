@@ -1,0 +1,2 @@
+{"__type":"$$EventMessageAudit","id":"cc27796d-1bb6-4579-aeeb-91fdce8041f3","ts":"2025-09-07T08:12:07.548+00:00","eventName":"n8n.audit.workflow.created","message":"n8n.audit.workflow.created","payload":{"userId":"f13db634-7ee8-480b-923e-291268f0ae5c","_email":"eldandachi.nour@gmail.com","_firstName":"Nour","_lastName":"El Dandachi","globalRole":"global:owner","workflowId":"5QTX3sIwO48J9PN5","workflowName":"hello"}}
+{"__type":"$$EventMessageConfirm","confirm":"cc27796d-1bb6-4579-aeeb-91fdce8041f3","ts":"2025-09-07T08:12:07.549+00:00","source":{"id":"0","name":"eventBus"}}
