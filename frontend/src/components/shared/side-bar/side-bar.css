@@ -42,7 +42,7 @@
   justify-content: start;
   align-items: center;
   gap: 10px;
-  background-color: rgb(206, 206, 206);
+  background-color: rgb(223, 223, 223);
   padding: 0.7rem 0.5rem;
   width: 85%;
   border-radius: 5px;
@@ -51,7 +51,7 @@
 
 
 .search-input{
-  background-color: rgb(206, 206, 206);
+  background-color: rgb(223, 223, 223);
   margin: 0;
   border: none;
   outline: none; 
