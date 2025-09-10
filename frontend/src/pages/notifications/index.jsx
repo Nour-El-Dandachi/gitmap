@@ -14,8 +14,10 @@ const Notifications= () => {
         <div className="repo-search">
           <Search />{" "}
           <input className="search-input" placeholder="Search for anything" />
-          
         </div>
+
+        <NotificationCard message={"this is a test notification"}/>
+        <NotificationCard message={"this is a test notification"} />
       </div>
       
     </div>
