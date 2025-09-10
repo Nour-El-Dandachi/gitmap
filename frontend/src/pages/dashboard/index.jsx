@@ -8,7 +8,7 @@ import RepositoryBox from "../../components/shared/repository-box";
 const Dashboard = () => {
     return (
         <div className="dashboard-page">
-            <SideBar name={"Nour El Dandachi"}/>
+            <SideBar/>
             <div className="dashboard-right">
                <Header location={"Dashboard"} /> 
                <AddBox />

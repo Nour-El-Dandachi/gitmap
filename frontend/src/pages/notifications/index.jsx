@@ -8,7 +8,7 @@ import NotificationCard from "../../components/notification-card";
 const Notifications= () => {
     return (
     <div className="notifications-page">
-      <SideBar name={"Nour El Dandachi"} />
+      <SideBar/>
       <div className="notifications-right">
         <Header location={"Notifications"} />
         <div className="repo-search">

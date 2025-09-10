@@ -8,7 +8,7 @@ import { Search } from "lucide-react";
 const MyRepositories = () => {
   return (
     <div className="dashboard-page">
-      <SideBar name={"Nour El Dandachi"} />
+      <SideBar/>
       <div className="dashboard-right">
         <Header location={"My Repositories"} />
         <div className="repo-search">

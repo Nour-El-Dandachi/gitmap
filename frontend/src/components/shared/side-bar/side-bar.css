@@ -65,38 +65,18 @@
   width: 85%;
 }
 
-.menu-dashboard{
+.menu-item {
   display: flex;
   flex-direction: row;
   justify-content: start;
   align-items: center;
   gap: 10px;
+  padding: 0.7rem 0.5rem;
+  width: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.menu-item.active {
   background-color: #d1cefb;
-  padding: 0.7rem 0.5rem;
-  width: 100%;
-  border-radius: 5px;
-}
-
-.menu-repositories{
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  align-items: center;
-  gap: 10px;
-
-  padding: 0.7rem 0.5rem;
-  width: 100%;
-  border-radius: 5px;
-}
-
-.menu-notifications{
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  align-items: center;
-  gap: 10px;
-
-  padding: 0.7rem 0.5rem;
-  width: 100%;
-  border-radius: 5px;
 }

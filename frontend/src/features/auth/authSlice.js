@@ -4,6 +4,25 @@ import { jwtDecode } from 'jwt-decode';
 
 const API_URL = 'http://localhost:8000/api';
 
+const storedAccess = localStorage.getItem('access');
+let decodedUser = null;
+
+if (storedAccess) {
+  try {
+    const decoded = jwtDecode(storedAccess);
+    decodedUser = {
+      id: decoded.user_id,
+      name: decoded.name,
+      email: decoded.email,
+      role: decoded.role,
+    };
+  } catch (err) {
+    console.error('Invalid token in localStorage:', err);
+    localStorage.removeItem('access');
+    localStorage.removeItem('refresh');
+  }
+}
+
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
@@ -23,7 +42,7 @@ export const loginUser = createAsyncThunk(
         tokens: { access, refresh },
       };
     } catch (err) {
-      return rejectWithValue("Login failed");
+      return rejectWithValue('Login failed');
     }
   }
 );
@@ -47,16 +66,16 @@ export const registerUser = createAsyncThunk(
         tokens: { access, refresh },
       };
     } catch (err) {
-      return rejectWithValue("Registration failed");
+      return rejectWithValue('Registration failed');
     }
   }
 );
 
 const initialState = {
-  user: null,
-  access: localStorage.getItem('access') || null,
+  user: decodedUser,
+  access: storedAccess,
   refresh: localStorage.getItem('refresh') || null,
-  isAuthenticated: !!localStorage.getItem('access'),
+  isAuthenticated: !!storedAccess,
   loading: false,
   error: null,
 };
@@ -76,7 +95,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // LOGIN
+      
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -87,7 +106,6 @@ const authSlice = createSlice({
         state.access = action.payload.tokens.access;
         state.refresh = action.payload.tokens.refresh;
         state.isAuthenticated = true;
-
         localStorage.setItem('access', action.payload.tokens.access);
         localStorage.setItem('refresh', action.payload.tokens.refresh);
       })
@@ -96,7 +114,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // REGISTER
+      
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -107,7 +125,6 @@ const authSlice = createSlice({
         state.access = action.payload.tokens.access;
         state.refresh = action.payload.tokens.refresh;
         state.isAuthenticated = true;
-
         localStorage.setItem('access', action.payload.tokens.access);
         localStorage.setItem('refresh', action.payload.tokens.refresh);
       })
