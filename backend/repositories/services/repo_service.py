@@ -27,8 +27,18 @@ ACCEPTED_EXTENSIONS = [
     ".rb", ".go", ".cpp", ".c", ".cs", ".json", ".yml", ".yaml", ".md"
 ]
 
+
+
+
 class RepoService:
 
+    @staticmethod 
+    def get_user_repositories(user):
+        """
+        Returns all repositories that belong to a given user.
+        """
+        return Repository.objects.filter(user=user).order_by("-created_at")
+    
     @staticmethod
     def parse_repo_url(url):
         parsed = urlparse(url)

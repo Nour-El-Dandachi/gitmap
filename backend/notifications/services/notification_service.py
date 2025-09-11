@@ -39,3 +39,4 @@ class NotificationService:
         notification = NotificationService.get(user, notification_id)
         notification.delete()
         return True
+
