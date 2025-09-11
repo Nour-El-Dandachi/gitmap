@@ -1,25 +1,53 @@
 import React from "react";
 import "./side-bar.css";
 import { Bell, Github, LayoutDashboard, Search, ChevronDown, UserRound } from "lucide-react";
+import gitmapLogo from "../../../assets/logos/gitmap_3.png";
+import { useSelector } from "react-redux";
 
-const SideBar = ({name}) => {
+import { useNavigate, useLocation } from "react-router-dom";
+
+const SideBar = () => {
+  const { user } = useSelector((s) => s.auth);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
+
   return (
     <div className="side-bar">
+      {/* Profile */}
+      <div className="header-img">
+        <img src={gitmapLogo} alt="logo" className="logo" />
+      </div>
       <div className="bar-profile">
         <div className="profile-photo"><UserRound /></div>
-        <div className="profile-name"> {name} <ChevronDown /></div>
+        <div className="profile-name">{user?.name}</div>
       </div>
-      <div className="bar-search">
-        <Search /> <input className="search-input" placeholder="Search for anything" />
-      </div>
+
+      {/* Menu */}
       <div className="bar-menu">
-            <div className="menu-dashboard"><LayoutDashboard/> Dashboard</div>
-            <div className="menu-repositories"><Github/> My Repositories</div>
-            <div className="menu-notifications"><Bell/> Notifications</div>
+        <div
+          className={`menu-item ${isActive("/dashboard") ? "active" : ""}`}
+          onClick={() => navigate("/dashboard")}
+        >
+          <LayoutDashboard /> Dashboard
+        </div>
+        <div
+          className={`menu-item ${isActive("/my-repositories") ? "active" : ""}`}
+          onClick={() => navigate("/my-repositories")}
+        >
+          <Github /> My Repositories
+        </div>
+        <div
+          className={`menu-item ${isActive("/notifications") ? "active" : ""}`}
+          onClick={() => navigate("/notifications")}
+        >
+          <Bell /> Notifications
+        </div>
       </div>
-      
     </div>
   );
 };
+
 
 export default SideBar;

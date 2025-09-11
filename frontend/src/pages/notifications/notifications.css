@@ -1,0 +1,8 @@
+.notifications-page{
+    display: flex;
+    flex-direction: row;
+}
+
+.notifications-right{
+    width: 90%;
+}

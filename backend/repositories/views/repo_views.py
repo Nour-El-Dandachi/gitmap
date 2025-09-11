@@ -8,6 +8,26 @@ from utils.response import responseJSON
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+
+from repositories.serializers import RepositorySerializer
+
+class UserRepositoriesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        repos = RepoService.get_user_repositories(request.user)
+        serializer = RepositorySerializer(repos, many=True)
+        return Response(
+            {"status": "success", "payload": serializer.data},
+            status=status.HTTP_200_OK
+        )
+
+
 class FetchTreeView(APIView):
     permission_classes = [IsAuthenticated]
 

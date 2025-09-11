@@ -1,22 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import GithubButton from "../../shared/github-btn";
 import Input from "../../shared/input";
 import "./right-side.css";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../../../features/auth/authSlice";
 import gitmapLogo from "../../../assets/logos/gitmap_2.png";
 
-
 const RightSide = () => {
-    const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [error, setError] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [localError, setLocalError] = useState("");
+
+  const { loading, error: reduxError } = useSelector((s) => s.auth);
+
+  const handleRegister = () => {
+    if (!name || !email || !password || !confirm) {
+      setLocalError("All fields are required.");
+      return;
+    }
+    if (password !== confirm) {
+      setLocalError("Passwords do not match.");
+      return;
+    }
+
+    dispatch(registerUser({ name, email, password }))
+      .unwrap()
+      .then(() => navigate("/dashboard"))
+      .catch((err) => setLocalError(err));
+  };
 
   return (
     <div className="register-left-side">
-      <div className="register-logo"><img src={gitmapLogo}></img></div>
+      <div className="register-logo">
+        <img src={gitmapLogo} alt="GitMap logo" />
+      </div>
       <div className="register-form">
         <h1>Welcome to gitmap!</h1>
         <GithubButton location={"register"} />
@@ -25,25 +48,59 @@ const RightSide = () => {
         </div>
 
         <div className="register-inputs">
-            <Input hint={"Full Name"} icon={"user"} />
-          <Input hint={"Email"} icon={"mail"} />
-          <Input hint={"Password"} icon={"lock"} />
-          <Input hint={"Confirm Password"} icon={"lock"} />
+          <Input
+            type="text"
+            name="name"
+            hint="Full Name"
+            icon="user"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            type="email"
+            name="email"
+            hint="Email"
+            icon="mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            type="password"
+            name="password"
+            hint="Password"
+            icon="lock"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Input
+            type="password"
+            name="confirm"
+            hint="Confirm Password"
+            icon="lock"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+          />
         </div>
 
-        <button className="register-btn">Sign Up</button>
+        <button
+          className="register-btn"
+          disabled={loading}
+          onClick={handleRegister}
+        >
+          {loading ? "Signing up..." : "Sign Up"}
+        </button>
         <p className="under-btn-txt">
           Already have an account?{" "}
           <button
             className="register-link"
-            onClick={() => {
-              navigate("/login");
-            }}
+            onClick={() => navigate("/login")}
           >
             Log in
           </button>
-          {error && <p className="form-error">{error}</p>}
         </p>
+        {(localError || reduxError) && (
+          <p className="form-error">{localError || reduxError}</p>
+        )}
       </div>
     </div>
   );
