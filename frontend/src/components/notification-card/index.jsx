@@ -17,7 +17,7 @@ function timeAgo(dateString) {
   return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
 }
 
-const NotificationCard = ({ message, is_read, created_at }) => {
+const NotificationCard = ({ id, message, is_read, created_at, onMarkRead }) => {
   return (
     <div className={`notification-card ${is_read ? "read" : "unread"}`}>
       <div className="notif-header">
@@ -28,7 +28,12 @@ const NotificationCard = ({ message, is_read, created_at }) => {
         <div className="head-right">{timeAgo(created_at)}</div>
       </div>
       <div className="notif-bottom">
-        <div className="mark-as-read"><CheckCheck size={18}/> Mark as read</div>
+        <div
+          className="mark-as-read"
+          onClick={() => onMarkRead(id)}
+        >
+          <CheckCheck size={18}/> Mark as read
+        </div>
         <div className="delete-btn">Delete</div>
       </div>
     </div>

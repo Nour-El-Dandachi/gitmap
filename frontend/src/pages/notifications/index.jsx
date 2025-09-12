@@ -29,7 +29,26 @@ const Notifications = () => {
     fetchNotifications();
   }, [access]);
 
-  // Filter by search term
+  const handleMarkRead = async (id) => {
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/notifications/${id}/mark-read/`,
+        {},
+        { headers: { Authorization: `Bearer ${access}` } }
+      );
+
+      if (res.data.status === "success") {
+        setNotifications((prev) =>
+          prev.map((n) =>
+            n.id === id ? { ...n, is_read: true } : n
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Failed to mark as read", err);
+    }
+  };
+
   const filtered = notifications.filter((n) =>
     n.message.toLowerCase().includes(search.toLowerCase())
   );
@@ -54,9 +73,11 @@ const Notifications = () => {
           filtered.map((n) => (
             <NotificationCard
               key={n.id}
+              id={n.id}
               message={n.message}
               is_read={n.is_read}
               created_at={n.created_at}
+              onMarkRead={handleMarkRead}
             />
           ))
         ) : (
@@ -66,5 +87,6 @@ const Notifications = () => {
     </div>
   );
 };
+
 
 export default Notifications;
