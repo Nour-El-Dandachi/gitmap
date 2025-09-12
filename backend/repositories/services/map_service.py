@@ -1,7 +1,13 @@
 # repositories/services/map_service.py
 import re
 import ast
-from repositories.models import FileContent
+import os
+import json
+import anthropic
+from repositories.models import FileContent, RepoFile
+
+# Initialize Claude client with key from .env
+claude_client = anthropic.Anthropic(api_key=os.environ.get("CLAUDE_KEY"))
 
 def parse_php_imports(content: str) -> list[str]:
     imports = set()
@@ -36,6 +42,7 @@ def parse_python_imports(content: str) -> list[str]:
         print("[PYTHON PARSER ERROR]", e)
     return list(imports)
 
+
 def parse_js_imports(content: str) -> list[str]:
     pattern = re.compile(
         r"""
@@ -48,6 +55,7 @@ def parse_js_imports(content: str) -> list[str]:
     matches = pattern.findall(content)
     imports = [m for group in matches for m in group if m]
     return list(set(imports))
+
 
 def parse_java_imports(content: str) -> list[str]:
     pattern = re.compile(r'^\s*import\s+(?:static\s+)?([a-zA-Z0-9_.]+);', re.MULTILINE)
@@ -88,8 +96,6 @@ def build_file_imports(repo_id: int, file_ids: list[int]):
     return results
 
 
-from repositories.models import RepoFile
-
 def list_indexed_files_for_llm(repo_id: int):
     qs = RepoFile.objects.filter(repository_id=repo_id, is_indexed=True).only("id", "file_name", "path")
     out = []
@@ -99,51 +105,45 @@ def list_indexed_files_for_llm(repo_id: int):
     return out
 
 
-from openai import OpenAI
-import os
-import json
-from repositories.models import RepoFile
-
 def get_key_files_for_map(repo_id: int):
     files = list_indexed_files_for_llm(repo_id)
 
     prompt = f"""
-        You are a codebase analysis assistant.
+You are a codebase analysis assistant.
 
-        You are given a list of files from a repository. Each file has an id, name, and path.
+You are given a list of files from a repository. Each file has an id, name, and path.
 
-        Your task:
-        - Select only the most important files needed to understand how the codebase works and how files are connected.
-        - Exclude any files that are:
-        - Migrations
-        - Seeds
-        - Configs
-        - Factories
-        - Views/templates
-        - Assets (CSS, JS, images)
-        - Tests
-        - Routes
-        - Return a clean JSON array of file objects. Each must include:
-        - id
-        - file
-        - path
+Your task:
+- Select only the most important files needed to understand how the codebase works and how files are connected.
+- Exclude any files that are:
+  - Migrations
+  - Seeds
+  - Configs
+  - Factories
+  - Views/templates
+  - Assets (CSS, JS, images)
+  - Tests
+  - Routes
+- Return a clean JSON array of file objects. Each must include:
+  - id
+  - file
+  - path
 
-        Respond ONLY with the valid JSON. No markdown. No explanation.
+Respond ONLY with the valid JSON. No markdown. No explanation.
 
-        Here is the input:
+Here is the input:
 
-        {json.dumps(files, indent=2)}
-        """
+{json.dumps(files, indent=2)}
+"""
 
-    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY")) 
-
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0
+    response = claude_client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=1000,
+        temperature=0,
+        messages=[{"role": "user", "content": prompt}]
     )
 
-    content = response.choices[0].message.content.strip()
+    content = response.content[0].text.strip()
 
     try:
         if content.startswith("```"):
@@ -160,33 +160,32 @@ def get_key_files_for_map(repo_id: int):
 
 def generate_connections_from_imports(parsed_imports: list[dict]):
     prompt = f"""
-        You are given the following repository structure with files and their imports:
+You are given the following repository structure with files and their imports:
 
-        {json.dumps(parsed_imports, indent=2)}
+{json.dumps(parsed_imports, indent=2)}
 
-        Output a **valid raw JSON** object with this structure:
-        {{
-        "nodes": [{{"id": "file_path", "label": "file_name"}}],
-        "edges": [{{"source": "file_path", "target": "file_path"}}]
-        }}
+Output a **valid raw JSON** object with this structure:
+{{
+  "nodes": [{{"id": "file_path", "label": "file_name"}}],
+  "edges": [{{"source": "file_path", "target": "file_path"}}]
+}}
 
-        Rules:
-        - Use "source" and "target" (not "from"/"to")
-        - Ignore external libraries like Illuminate, Symfony, etc.
-        - **Imports**: If file A imports/uses file B, add `{{"source": "A", "target": "B"}}`.
-        - **Inheritance**: If `class X extends Y`, add edge from X → Y.
-        - Do NOT explain anything. No markdown. Just valid JSON.
-            """
+Rules:
+- Use "source" and "target" (not "from"/"to")
+- Ignore external libraries like Illuminate, Symfony, etc.
+- **Imports**: If file A imports/uses file B, add {{"source": "A", "target": "B"}}.
+- **Inheritance**: If `class X extends Y`, add edge from X → Y.
+- Do NOT explain anything. No markdown. Just valid JSON.
+"""
 
-    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0
+    response = claude_client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=1000,
+        temperature=0,
+        messages=[{"role": "user", "content": prompt}]
     )
 
-    content = response.choices[0].message.content.strip()
+    content = response.content[0].text.strip()
 
     try:
         if content.startswith("```"):
