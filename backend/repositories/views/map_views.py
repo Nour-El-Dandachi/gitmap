@@ -1,28 +1,19 @@
-#repositories/views/map_views.py
-
+# repositories/views/map_views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from repositories.services.map_service import extract_import_lines_for_repo, resolve_import_links
-from repositories.models import FileContent
+from repositories.services.map_service import build_file_imports
 
-class RepoMapPreviewView(APIView):
+class RepoFileImportsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, repo_id):
-        import_map = extract_import_lines_for_repo(repo_id)
+        files_with_imports = build_file_imports(repo_id)
+        return Response(files_with_imports)
 
-        resolved_links = resolve_import_links(repo_id, import_map)
+from repositories.services.map_algorithm import build_code_map
 
-        file_contents = FileContent.objects.filter(repo_file__repository_id=repo_id).select_related("repo_file")
-        nodes = [{"id": fc.repo_file.path, "label": fc.repo_file.file_name or fc.repo_file.path} for fc in file_contents]
-
-        edges = []
-        for source, targets in resolved_links.items():
-            for target in targets:
-                edges.append({"source": source, "target": target})
-
-        return Response({
-            "nodes": nodes,
-            "edges": edges
-        })
+class RepoMapView(APIView):
+    def get(self, request, repo_id):
+        result = build_code_map(repo_id)
+        return Response(result)

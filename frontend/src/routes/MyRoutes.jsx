@@ -8,6 +8,7 @@ import ResetPassword from '../pages/reset-password/index.jsx';
 import Dashboard from '../pages/dashboard/index.jsx';
 import MyRepositories from '../pages/my-repositories/index.jsx';
 import Notifications from '../pages/notifications/index.jsx';
+import RepoMapPage from '../pages/repo-map/index.jsx';
 
 
 
@@ -22,6 +23,8 @@ const MyRoutes = ()=>{
             <Route path='/dashboard' element={<Dashboard />}/>
             <Route path='/my-repositories' element={<MyRepositories />}/>
             <Route path='/notifications' element={<Notifications />}/>
+            <Route path='/map' element={<RepoMapPage />}/>
+
             <Route path='/home' element={<Home />}/>
         </Routes>
     );
