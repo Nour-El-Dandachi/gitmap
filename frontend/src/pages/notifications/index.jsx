@@ -30,24 +30,21 @@ const Notifications = () => {
   }, [access]);
 
   const handleMarkRead = async (id) => {
-    try {
-      const res = await axios.post(
-        `http://localhost:8000/api/notifications/${id}/mark-read/`,
-        {},
-        { headers: { Authorization: `Bearer ${access}` } }
-      );
+  try {
+    const res = await axios.post(
+      `http://localhost:8000/api/notifications/${id}/mark-read/`,
+      {},
+      { headers: { Authorization: `Bearer ${access}` } }
+    );
 
-      if (res.data.status === "success") {
-        setNotifications((prev) =>
-          prev.map((n) =>
-            n.id === id ? { ...n, is_read: true } : n
-          )
-        );
-      }
-    } catch (err) {
-      console.error("Failed to mark as read", err);
+    if (res.data.status === "success") {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
     }
-  };
+  } catch (err) {
+    console.error("Failed to mark as read", err);
+  }
+};
+
 
   const filtered = notifications.filter((n) =>
     n.message.toLowerCase().includes(search.toLowerCase())
