@@ -43,6 +43,19 @@ function getLayoutedElements(nodes, edges, direction = "TB") {
   });
 }
 
+function getNodeStyle(name) {
+  if (name.endsWith("Controller.php")) {
+    return { backgroundColor: "#948BFC", color: "#fff", borderRadius: 10, padding: 10 };
+  }
+  if (name.endsWith("Service.php")) {
+    return { backgroundColor: "#FFD580", color: "#000", borderRadius: 10, padding: 10 };
+  }
+  if (name.endsWith(".php") && !name.includes("Controller") && !name.includes("Service")) {
+    return { backgroundColor: "#90EE90", color: "#000", borderRadius: 10, padding: 10 };
+  }
+  return { backgroundColor: "#D3D3D3", color: "#000", borderRadius: 10, padding: 10 };
+}
+
 const CodeMap = ({ repoId }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -60,24 +73,26 @@ const CodeMap = ({ repoId }) => {
       );
 
       const markdown = res.data.markdown;
-      const lines = markdown.split("\n").slice(2); // remove header
+      const lines = markdown.split("\n").slice(2);
 
       const nodeSet = new Set();
       const edgeList = [];
 
       lines.forEach((line) => {
-        const parts = line.split("|").map((part) => part.trim());
+        const parts = line.split("|").map((p) => p.trim());
         if (parts.length < 3) return;
-        const file = parts[1];
-        const usedByRaw = parts[2];
-        nodeSet.add(file);
 
-        if (usedByRaw) {
-          usedByRaw.split(",").forEach((consumer) => {
-            const target = consumer.trim();
-            if (target) {
-              nodeSet.add(target);
-              edgeList.push({ source: target, target: file });
+        const file = parts[1];
+        const usedBy = parts[2];
+
+        if (file) nodeSet.add(file);
+
+        if (usedBy) {
+          usedBy.split(",").forEach((consumer) => {
+            const cleaned = consumer.trim();
+            if (cleaned) {
+              nodeSet.add(cleaned);
+              edgeList.push({ source: cleaned, target: file });
             }
           });
         }
@@ -86,6 +101,7 @@ const CodeMap = ({ repoId }) => {
       const rawNodes = Array.from(nodeSet).map((name) => ({
         id: name,
         data: { label: name },
+        style: getNodeStyle(name),
         position: { x: 0, y: 0 },
       }));
 
@@ -94,6 +110,7 @@ const CodeMap = ({ repoId }) => {
         source: e.source,
         target: e.target,
         animated: true,
+        style: { stroke: "#131325" },
       }));
 
       const layoutedNodes = getLayoutedElements(rawNodes, rawEdges);
@@ -118,8 +135,8 @@ const CodeMap = ({ repoId }) => {
         onEdgesChange={onEdgesChange}
         fitView
       >
-        <Background />
-        <MiniMap />
+        <Background/>
+        <MiniMap nodeColor={(n) => n.style?.backgroundColor || "#ccc"} />
         <Controls />
       </ReactFlow>
     </div>
