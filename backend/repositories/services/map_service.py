@@ -1,4 +1,3 @@
-# repositories/services/map_service.py
 import re
 import ast
 import os
@@ -6,21 +5,18 @@ import json
 import anthropic
 from repositories.models import FileContent, RepoFile
 
-# Initialize Claude client with key from .env
 claude_client = anthropic.Anthropic(api_key=os.environ.get("CLAUDE_KEY"))
 
 def parse_php_imports(content: str) -> list[str]:
     imports = set()
-
     content = re.sub(r'//.*?$|/\*.*?\*/', '', content, flags=re.DOTALL | re.MULTILINE)
 
     use_pattern = re.compile(r'^\s*use\s+([A-Za-z0-9_\\]+);', re.MULTILINE)
-    imports.update(use_pattern.findall(content))
-
     include_pattern = re.compile(r'^\s*(?:include|require)(_once)?\s*[\'"]([^\'"]+)[\'"];', re.MULTILINE)
-    imports.update([match[1] for match in include_pattern.findall(content)])
-
     fqcn_pattern = re.compile(r'new\s+\\([A-Za-z0-9_\\]+)')
+
+    imports.update(use_pattern.findall(content))
+    imports.update([m[1] for m in include_pattern.findall(content)])
     imports.update(fqcn_pattern.findall(content))
 
     return list(imports)
@@ -44,17 +40,13 @@ def parse_python_imports(content: str) -> list[str]:
 
 
 def parse_js_imports(content: str) -> list[str]:
-    pattern = re.compile(
-        r"""
+    pattern = re.compile(r"""
         import\s+[^'"]*?['"]([^'"]+)['"]  |   
         require\(['"]([^'"]+)['"]\)       |   
         import\(['"]([^'"]+)['"]\)            
-        """,
-        re.VERBOSE
-    )
+        """, re.VERBOSE)
     matches = pattern.findall(content)
-    imports = [m for group in matches for m in group if m]
-    return list(set(imports))
+    return list(set([m for group in matches for m in group if m]))
 
 
 def parse_java_imports(content: str) -> list[str]:
@@ -71,11 +63,9 @@ def build_file_imports(repo_id: int, file_ids: list[int]):
     results = []
 
     for fc in file_contents:
-        path = fc.repo_file.path
         ext = (fc.repo_file.extension or "").lower()
         content = fc.content
 
-        imports = []
         if ext == ".php":
             imports = parse_php_imports(content)
         elif ext == ".py":
@@ -84,55 +74,51 @@ def build_file_imports(repo_id: int, file_ids: list[int]):
             imports = parse_js_imports(content)
         elif ext == ".java":
             imports = parse_java_imports(content)
+        else:
+            imports = []
 
         results.append({
             "file": fc.repo_file.file_name,
-            "path": path,
+            "path": fc.repo_file.path,
             "imports": imports
         })
 
-        print(f"[DEBUG] {path} → {imports}")
+        print(f"[DEBUG] {fc.repo_file.path} → {imports}")
 
     return results
 
 
 def list_indexed_files_for_llm(repo_id: int):
-    qs = RepoFile.objects.filter(repository_id=repo_id, is_indexed=True).only("id", "file_name", "path")
-    out = []
-    for f in qs:
-        fname = f.file_name
-        out.append({"id": f.id, "file": fname, "path": f.path})
-    return out
+    qs = RepoFile.objects.filter(repository_id=repo_id, is_indexed=True)
+    return [{"id": f.id, "file": f.file_name, "path": f.path} for f in qs]
 
 
 def get_key_files_for_map(repo_id: int):
     files = list_indexed_files_for_llm(repo_id)
 
     prompt = f"""
-You are a codebase analysis assistant.
+You are a Laravel expert assistant.
 
-You are given a list of files from a repository. Each file has an id, name, and path.
+Given this list of indexed Laravel repo files, select only the most important files needed to understand how the system works and how files are connected.
 
-Your task:
-- Select only the most important files needed to understand how the codebase works and how files are connected.
-- Exclude any files that are:
-  - Migrations
-  - Seeds
-  - Configs
-  - Factories
-  - Views/templates
-  - Assets (CSS, JS, images)
-  - Tests
-  - Routes
-- Return a clean JSON array of file objects. Each must include:
-  - id
-  - file
-  - path
+Exclude:
+- migrations
+- seeds
+- configs
+- factories
+- views/templates
+- assets (CSS/JS/images)
+- tests
+- route definitions
 
-Respond ONLY with the valid JSON. No markdown. No explanation.
+Return a clean JSON list. Each object must include:
+- id
+- file
+- path
 
-Here is the input:
+Respond ONLY with valid JSON (no markdown, no explanation).
 
+Input:
 {json.dumps(files, indent=2)}
 """
 
@@ -147,67 +133,84 @@ Here is the input:
 
     try:
         if content.startswith("```"):
-            content = content.strip("```json").strip("```")
-        result = json.loads(content)
-        return result
+            content = content.strip("```").strip("json").strip()
+        return json.loads(content)
     except Exception as e:
         print("[AI PARSE ERROR]", e)
-        return {
-            "error": "Invalid JSON from AI",
-            "raw": content
-        }
+        return {"error": "Invalid JSON from AI", "raw": content}
 
 
-def generate_connections_from_imports(parsed_imports: list[dict]):
+def generate_dependency_table(parsed_files: list[dict]):
     prompt = f"""
-You are given the following repository structure with files and their imports:
+You are analyzing a Laravel repository.
 
-{json.dumps(parsed_imports, indent=2)}
+You are given a list of files and the imports each one contains:
 
-Output a **valid raw JSON** object with this structure:
-{{
-  "nodes": [{{"id": "file_path", "label": "file_name"}}],
-  "edges": [{{"source": "file_path", "target": "file_path"}}]
-}}
+{json.dumps(parsed_files, indent=2)}
+
+Your task is to generate a **2-column Markdown table**:
+- Column 1: the file name (e.g., UserController.php)
+- Column 2: a list of file names (not paths) that imported or used this file
 
 Rules:
-- Use "source" and "target" (not "from"/"to")
-- Ignore external libraries like Illuminate, Symfony, etc.
-- **Imports**: If file A imports/uses file B, add {{"source": "A", "target": "B"}}.
-- **Inheritance**: If `class X extends Y`, add edge from X → Y.
-- Do NOT explain anything. No markdown. Just valid JSON.
+- Only include relationships between files in this list.
+- Ignore third-party imports (like Illuminate, Symfony, etc).
+- If some connections are missing but **logically should exist** (e.g. Controller → Service → Model), include them.
+- Respond with **valid Markdown table only**. No explanation. No code blocks.
 """
 
     response = claude_client.messages.create(
         model="claude-sonnet-4-20250514",
-        max_tokens=1000,
+        max_tokens=2000,
         temperature=0,
         messages=[{"role": "user", "content": prompt}]
     )
 
     content = response.content[0].text.strip()
+    if content.startswith("```"):
+        content = content.strip("```").strip("markdown").strip()
 
-    try:
-        if content.startswith("```"):
-            content = content.strip("```json").strip("```")
-        result = json.loads(content)
-        return result
-    except Exception as e:
-        print("[AI PARSE ERROR - CONNECTION MAP]", e)
-        return {
-            "error": "Invalid JSON from AI",
-            "raw": content
-        }
+    markdown_response = content
+
+    output_path = f"/app/dependency_table_repo.xlsx"
+
+    markdown_table_to_excel(markdown_response, output_path)
 
 
-def get_codebase_map(repo_id: int):
+    return {
+        "markdown": content,
+        "excel_path": output_path
+    }
+
+
+
+def get_codebase_dependency_table(repo_id: int):
     important_files = get_key_files_for_map(repo_id)
-
     if "error" in important_files:
         return important_files
 
     file_ids = [f["id"] for f in important_files]
     parsed = build_file_imports(repo_id, file_ids)
 
-    result = generate_connections_from_imports(parsed)
-    return result
+    return generate_dependency_table(parsed)
+
+
+import pandas as pd
+from io import StringIO
+
+def markdown_table_to_excel(markdown_str: str, output_path: str = "dependencies.xlsx"):
+    markdown_str = markdown_str.strip()
+    if markdown_str.startswith("```"):
+        markdown_str = markdown_str.strip("```markdown").strip("```")
+
+    df = pd.read_csv(StringIO(markdown_str), sep="|", skipinitialspace=True, engine='python')
+
+    df = df.dropna(axis=1, how='all')
+
+    df = df[~df[df.columns[0]].str.strip().str.contains("^-+$")]
+
+    df.columns = [col.strip() for col in df.columns]
+    df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+
+    df.to_excel(output_path, index=False)
+
