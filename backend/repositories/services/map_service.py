@@ -78,6 +78,7 @@ def build_file_imports(repo_id: int, file_ids: list[int]):
             imports = []
 
         results.append({
+            "id": fc.repo_file.id,
             "file": fc.repo_file.file_name,
             "path": fc.repo_file.path,
             "imports": imports
@@ -148,15 +149,19 @@ You are given a list of files and the imports each one contains:
 
 {json.dumps(parsed_files, indent=2)}
 
-Your task is to generate a **2-column Markdown table**:
-- Column 1: the file name (e.g., UserController.php)
-- Column 2: a list of file names (not paths) that imported or used this file
+Your task is to generate a **3-column Markdown table** where:
 
-Rules:
-- Only include relationships between files in this list.
+- Column 1: the file ID (e.g., 42)
+- Column 2: the file name (e.g., UserController.php)
+- Column 3: a **list of file IDs** (e.g., 18, 23) that imported or used this file
+
+Strict rules:
+- Use only the provided file IDs — do NOT fabricate or invent any.
+- Only include relationships between the given files.
 - Ignore third-party imports (like Illuminate, Symfony, etc).
-- If some connections are missing but **logically should exist** (e.g. Controller → Service → Model), include them.
+- If some connections are missing but **logically should exist** (e.g. Controller → Service → Model), include them using the correct IDs.
 - Respond with **valid Markdown table only**. No explanation. No code blocks.
+- Maintain accuracy: every ID in the table must match one from the input.
 """
 
     response = claude_client.messages.create(
@@ -175,7 +180,6 @@ Rules:
     output_path = f"/app/dependency_table_repo.xlsx"
 
     markdown_table_to_excel(markdown_response, output_path)
-
 
     return {
         "markdown": content,
