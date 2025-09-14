@@ -1,10 +1,18 @@
 import React from "react";
 import './repository-box.css';
 import RepoImg from "../../../assets/image.png";
+import { useNavigate } from "react-router-dom";
 
-const RepositoryBox = ({ name, createdAt }) => {
+const RepositoryBox = ({ id, name, createdAt }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    localStorage.setItem("selectedRepoId", id);
+    navigate("/map");
+  };
+
   return (
-    <div className="repository-box">
+    <div className="repository-box" onClick={handleClick} style={{ cursor: "pointer" }}>
       <div className="repo-img">
         <img className="repos-img" src={RepoImg} alt="repo" />
       </div>
@@ -17,3 +25,4 @@ const RepositoryBox = ({ name, createdAt }) => {
 };
 
 export default RepositoryBox;
+

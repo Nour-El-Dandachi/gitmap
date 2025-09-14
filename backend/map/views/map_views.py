@@ -16,13 +16,18 @@ class NodePositionListCreateView(APIView):
 
     def post(self, request):
         data = request.data
+        is_bulk = isinstance(data, list)
+
         try:
-            node = MapService.create_node_position(
-                repo_file_id=data["repo_file"],
-                x=data["x"],
-                y=data["y"]
-            )
-            return Response(NodePositionSerializer(node).data, status=status.HTTP_201_CREATED)
+            if is_bulk:
+                serializer = NodePositionSerializer(data=data, many=True)
+            else:
+                serializer = NodePositionSerializer(data=data)
+
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -35,15 +40,20 @@ class FileEdgeListCreateView(APIView):
 
     def post(self, request):
         data = request.data
+        is_bulk = isinstance(data, list)
+
         try:
-            edge = MapService.create_file_edge(
-                source_id=data["source"],
-                target_id=data["target"]
-            )
-            return Response(FileEdgeSerializer(edge).data, status=status.HTTP_201_CREATED)
+            if is_bulk:
+                serializer = FileEdgeSerializer(data=data, many=True)
+            else:
+                serializer = FileEdgeSerializer(data=data)
+
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
 
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated

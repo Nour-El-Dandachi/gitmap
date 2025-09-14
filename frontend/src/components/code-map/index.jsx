@@ -59,53 +59,105 @@ function getNodeStyle(name) {
 const CodeMap = ({ repoId }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const token = localStorage.getItem("access");
+
+  const checkIfMapExists = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8000/api/repos/${repoId}/exists/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("[Map Check] Map exists?", res.data.exists);
+      return res.data.exists;
+    } catch (err) {
+      console.error("[Map Check] Failed:", err);
+      return false;
+    }
+  };
+
+  const fetchExistingMap = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8000/api/map/data/${repoId}/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const dbNodes = res.data.nodes.map((node) => ({
+        id: String(node.file_id),
+        data: { label: node.file_name },
+        style: getNodeStyle(node.file_name),
+        position: { x: node.x, y: node.y },
+        targetPosition: "top",
+        sourcePosition: "bottom",
+      }));
+
+      const dbEdges = res.data.edges.map((e) => ({
+        id: `${e.source}-${e.target}`,
+        source: String(e.source),
+        target: String(e.target),
+        animated: true,
+        style: { stroke: "#131325" },
+      }));
+
+      console.log("[Existing Map] Loaded nodes & edges:", dbNodes, dbEdges);
+      setNodes(dbNodes);
+      setEdges(dbEdges);
+    } catch (err) {
+      console.error("[Existing Map] Error loading map:", err);
+    }
+  };
 
   const fetchMapData = useCallback(async () => {
+    const exists = await checkIfMapExists();
+    if (exists) {
+      await fetchExistingMap();
+      return;
+    }
+
     try {
-      const token = localStorage.getItem("access");
       const res = await axios.get(
         `http://localhost:8000/api/repos/${repoId}/map-ai/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const markdown = res.data.markdown;
       const lines = markdown.split("\n").slice(2);
-
-      const nodeSet = new Set();
-      const edgeList = [];
+      const rawNodes = [];
+      const rawEdges = [];
 
       lines.forEach((line) => {
+        if (!line.includes("|")) return;
         const parts = line.split("|").map((p) => p.trim());
-        if (parts.length < 3) return;
+        if (parts.length < 4) return;
 
-        const file = parts[1];
-        const usedBy = parts[2];
+        const id = parts[1];
+        const name = parts[2];
+        const usedBy = parts[3];
 
-        if (file) nodeSet.add(file);
+        if (!id || !name) return;
+
+        rawNodes.push({ id, file_name: name });
 
         if (usedBy) {
-          usedBy.split(",").forEach((consumer) => {
-            const cleaned = consumer.trim();
-            if (cleaned) {
-              nodeSet.add(cleaned);
-              edgeList.push({ source: cleaned, target: file });
+          usedBy.split(",").forEach((targetId) => {
+            const target = targetId.trim();
+            if (target) {
+              rawEdges.push({ source: target, target: id });
             }
           });
         }
       });
 
-      const rawNodes = Array.from(nodeSet).map((name) => ({
-        id: name,
-        data: { label: name },
-        style: getNodeStyle(name),
-        position: { x: 0, y: 0 },
-      }));
+      const layoutedNodes = getLayoutedElements(
+        rawNodes.map((n) => ({
+          id: n.id,
+          data: { label: n.file_name },
+          style: getNodeStyle(n.file_name),
+          position: { x: 0, y: 0 },
+        })),
+        rawEdges.map((e) => ({ id: `${e.source}-${e.target}`, ...e }))
+      );
 
-      const rawEdges = edgeList.map((e) => ({
+      const finalNodes = layoutedNodes.map((n) => ({ ...n }));
+      const finalEdges = rawEdges.map((e) => ({
         id: `${e.source}-${e.target}`,
         source: e.source,
         target: e.target,
@@ -113,14 +165,44 @@ const CodeMap = ({ repoId }) => {
         style: { stroke: "#131325" },
       }));
 
-      const layoutedNodes = getLayoutedElements(rawNodes, rawEdges);
+      console.log("[New Map] Parsed nodes:", finalNodes);
+      console.log("[New Map] Parsed edges:", finalEdges);
 
-      setNodes(layoutedNodes);
-      setEdges(rawEdges);
-    } catch (error) {
-      console.error("Failed to fetch map data", error);
+      setNodes(finalNodes);
+      setEdges(finalEdges);
+
+      console.log(finalNodes)
+      console.log(finalEdges)
+
+      const nodesPayload = finalNodes.map((n) => ({
+        repo_file: parseInt(n.id),
+        x: n.position.x,
+        y: n.position.y,
+      }));
+
+      const edgesPayload = rawEdges.map((e) => ({
+        source: parseInt(e.source),
+        target: parseInt(e.target),
+      }));
+
+      console.log("[Save] Posting node positions:", nodesPayload);
+      await axios.post("http://localhost:8000/api/map/nodes/", nodesPayload, {
+        headers: { Authorization: `Bearer ${token}` },
+      }).catch((err) => {
+        console.error("[Save Nodes] Failed:", err.response?.data || err.message);
+      });
+
+      console.log("[Save] Posting edges:", edgesPayload);
+      await axios.post("http://localhost:8000/api/map/edges/", edgesPayload, {
+        headers: { Authorization: `Bearer ${token}` },
+      }).catch((err) => {
+        console.error("[Save Edges] Failed:", err.response?.data || err.message);
+      });
+
+    } catch (err) {
+      console.error("[Map-AI] Failed to generate map:", err);
     }
-  }, [repoId, setNodes, setEdges]);
+  }, [repoId]);
 
   useEffect(() => {
     fetchMapData();
@@ -135,7 +217,7 @@ const CodeMap = ({ repoId }) => {
         onEdgesChange={onEdgesChange}
         fitView
       >
-        <Background/>
+        <Background />
         <MiniMap nodeColor={(n) => n.style?.backgroundColor || "#ccc"} />
         <Controls />
       </ReactFlow>
