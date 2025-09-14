@@ -10,14 +10,19 @@ from repositories.views.map_views import RepoFileImportsView
 from repositories.views.map_ai_views import RepoMapAIView
 from repositories.views.map_ai_views import ImportantFilesForMapView
 from repositories.views.map_views import RepoMapView
+from repositories.views.map_views import RepoMapExistsView
 
 
 urlpatterns = [
 
     path('<int:repo_id>/map/', RepoMapView.as_view(), name='repo-code-map'),
 
+
     path("<int:repo_id>/important-files/", ImportantFilesForMapView.as_view(), name="important-files"),
     path("<int:repo_id>/map-ai/", RepoMapAIView.as_view(), name="repo-map-ai"),
+
+    path("<int:repo_id>/exists/", RepoMapExistsView.as_view()),
+
    
     path("<int:repo_id>/file-imports/", RepoFileImportsView.as_view(), name="repo-file-imports"),
 
