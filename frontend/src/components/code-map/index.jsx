@@ -48,10 +48,10 @@ function getNodeStyle(name) {
     return { backgroundColor: "#948BFC", color: "#fff", borderRadius: 10, padding: 10 };
   }
   if (name.endsWith("Service.php")) {
-    return { backgroundColor: "#FFD580", color: "#000", borderRadius: 10, padding: 10 };
+    return { backgroundColor: "#131325", color: "#fff", borderRadius: 10, padding: 10 };
   }
   if (name.endsWith(".php") && !name.includes("Controller") && !name.includes("Service")) {
-    return { backgroundColor: "#90EE90", color: "#000", borderRadius: 10, padding: 10 };
+    return { backgroundColor: "#D6D3F3", color: "#000", borderRadius: 10, padding: 10 };
   }
   return { backgroundColor: "#D3D3D3", color: "#000", borderRadius: 10, padding: 10 };
 }
