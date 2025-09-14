@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'notifications',
     'chat',
     'indexing',
+    'map',
     
     'social_django',
 
