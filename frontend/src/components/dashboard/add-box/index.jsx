@@ -19,14 +19,13 @@ const AddBox = () => {
     }
     try {
       setStatus(null);
-      // Call backend
       await axios.post(
         "http://localhost:8000/api/repos/add/",
         { url },
         { headers: { Authorization: `Bearer ${access}` } }
       );
-
-      // Instantly redirect to fake loader page
+      const repoId = res.data.payload.repo_id;
+      localStorage.setItem("selectedRepoId", repoId);
       navigate("/loader");
     } catch (err) {
       console.error(err);

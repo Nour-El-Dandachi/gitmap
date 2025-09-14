@@ -1,4 +1,3 @@
-// LoaderPage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./loader-page.css";
@@ -10,14 +9,13 @@ const LoaderPage = () => {
   useEffect(() => {
     let current = 0;
     const interval = setInterval(() => {
-      current += 5; // Increase 5% every second
+      current += 5;
       if (current >= 100) {
         clearInterval(interval);
-        // After 20s, go back to dashboard (or repo list)
-        navigate("/dashboard"); 
+        navigate("/map"); 
       }
       setProgress(current);
-    }, 1000); // 20 steps → 20s
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [navigate]);
