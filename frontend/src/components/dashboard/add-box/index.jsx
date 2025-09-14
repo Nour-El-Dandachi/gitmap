@@ -19,7 +19,7 @@ const AddBox = () => {
     }
     try {
       setStatus(null);
-      await axios.post(
+      const res = await axios.post(
         "http://localhost:8000/api/repos/add/",
         { url },
         { headers: { Authorization: `Bearer ${access}` } }
@@ -32,6 +32,7 @@ const AddBox = () => {
       setStatus("Failed to add repository.");
     }
   };
+
 
   return (
     <div className="add-box">

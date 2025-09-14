@@ -3,7 +3,7 @@ import ast
 import os
 import json
 import anthropic
-from repositories.models import FileContent, RepoFile
+from repositories.models import FileContent, RepoFile, Repository
 
 claude_client = anthropic.Anthropic(api_key=os.environ.get("CLAUDE_KEY"))
 
@@ -195,6 +195,8 @@ def get_codebase_dependency_table(repo_id: int):
 
     file_ids = [f["id"] for f in important_files]
     parsed = build_file_imports(repo_id, file_ids)
+
+    Repository.objects.filter(id=repo_id).update(has_map=True)
 
     return generate_dependency_table(parsed)
 
