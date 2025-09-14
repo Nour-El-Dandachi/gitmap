@@ -11,7 +11,6 @@ class NodePosition(models.Model):
 
 
 class FileEdge(models.Model):
-    repo = models.ForeignKey(Repository, on_delete=models.CASCADE, related_name="file_edges")
     source = models.ForeignKey(RepoFile, on_delete=models.CASCADE, related_name="edge_sources")
     target = models.ForeignKey(RepoFile, on_delete=models.CASCADE, related_name="edge_targets")
 
