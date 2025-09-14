@@ -43,3 +43,34 @@ class FileEdgeListCreateView(APIView):
             return Response(FileEdgeSerializer(edge).data, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from map.models import NodePosition, FileEdge
+from repositories.models import RepoFile
+
+from map.serializers import NodePositionReadSerializer, FileEdgeReadSerializer
+
+
+class MapDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, repo_id):
+        repo_file_ids = RepoFile.objects.filter(repository_id=repo_id).values_list("id", flat=True)
+
+        nodes = NodePosition.objects.filter(repo_file_id__in=repo_file_ids).select_related("repo_file")
+        edges = FileEdge.objects.filter(
+            source_id__in=repo_file_ids,
+            target_id__in=repo_file_ids
+        )
+
+        serialized_nodes = NodePositionReadSerializer(nodes, many=True).data
+        serialized_edges = FileEdgeReadSerializer(edges, many=True).data
+
+        return Response({
+            "nodes": serialized_nodes,
+            "edges": serialized_edges
+        })
