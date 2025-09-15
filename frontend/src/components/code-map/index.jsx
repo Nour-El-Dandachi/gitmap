@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -9,6 +9,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import axios from "axios";
 import dagre from "dagre";
+import "./code-map.css";
 
 const nodeWidth = 200;
 const nodeHeight = 50;
@@ -18,55 +19,93 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 function getLayoutedElements(nodes, edges, direction = "TB") {
   dagreGraph.setGraph({ rankdir: direction });
-
-  nodes.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
-  });
-
-  edges.forEach((edge) => {
-    dagreGraph.setEdge(edge.source, edge.target);
-  });
-
+  nodes.forEach((node) =>
+    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight })
+  );
+  edges.forEach((edge) => dagreGraph.setEdge(edge.source, edge.target));
   dagre.layout(dagreGraph);
 
   return nodes.map((node) => {
-    const nodeWithPosition = dagreGraph.node(node.id);
-    node.targetPosition = "top";
-    node.sourcePosition = "bottom";
+    const pos = dagreGraph.node(node.id);
     return {
       ...node,
-      position: {
-        x: nodeWithPosition.x - nodeWidth / 2,
-        y: nodeWithPosition.y - nodeHeight / 2,
-      },
+      position: { x: pos.x - nodeWidth / 2, y: pos.y - nodeHeight / 2 },
+      targetPosition: "top",
+      sourcePosition: "bottom",
     };
   });
 }
 
 function getNodeStyle(name) {
-  if (name.endsWith("Controller.php")) {
+  if (name.endsWith("Controller.php"))
     return { backgroundColor: "#948BFC", color: "#fff", borderRadius: 10, padding: 10 };
-  }
-  if (name.endsWith("Service.php")) {
+  if (name.endsWith("Service.php"))
     return { backgroundColor: "#131325", color: "#fff", borderRadius: 10, padding: 10 };
-  }
-  if (name.endsWith(".php") && !name.includes("Controller") && !name.includes("Service")) {
+  if (name.endsWith(".php") && !name.includes("Controller") && !name.includes("Service"))
     return { backgroundColor: "#D6D3F3", color: "#000", borderRadius: 10, padding: 10 };
-  }
   return { backgroundColor: "#D3D3D3", color: "#000", borderRadius: 10, padding: 10 };
 }
 
 const CodeMap = ({ repoId }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  const [chatOpen, setChatOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState("");
+  const [activeFile, setActiveFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const token = localStorage.getItem("access");
+  const sessionId = 1;
+
+  const handleNodeClick = (event, node) => {
+    setActiveFile(node);
+    setMessages([]);
+    setChatOpen(true);
+  };
+
+  const sendQuestion = async () => {
+    if (!currentQuestion || !activeFile) return;
+
+    const userMsg = { role: "user", text: currentQuestion };
+    setMessages((prev) => [...prev, userMsg]);
+    setCurrentQuestion("");
+    setLoading(true);
+
+    try {
+      const res = await axios.post(
+        "http://localhost:8000/api/chat/file/",
+        {
+          session_id: sessionId,
+          file_id: parseInt(activeFile.id),
+          question: userMsg.text,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "ai", text: res.data.payload.answer || "[No answer]" },
+      ]);
+    } catch (err) {
+      console.error("Chat failed:", err);
+      setMessages((prev) => [...prev, { role: "ai", text: "[Error getting answer]" }]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const checkIfMapExists = async () => {
     try {
       const res = await axios.get(`http://localhost:8000/api/repos/${repoId}/exists/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("[Map Check] Map exists?", res.data.exists);
       return res.data.exists;
     } catch (err) {
       console.error("[Map Check] Failed:", err);
@@ -97,7 +136,6 @@ const CodeMap = ({ repoId }) => {
         style: { stroke: "#131325" },
       }));
 
-      console.log("[Existing Map] Loaded nodes & edges:", dbNodes, dbEdges);
       setNodes(dbNodes);
       setEdges(dbEdges);
     } catch (err) {
@@ -165,14 +203,8 @@ const CodeMap = ({ repoId }) => {
         style: { stroke: "#131325" },
       }));
 
-      console.log("[New Map] Parsed nodes:", finalNodes);
-      console.log("[New Map] Parsed edges:", finalEdges);
-
       setNodes(finalNodes);
       setEdges(finalEdges);
-
-      console.log(finalNodes)
-      console.log(finalEdges)
 
       const nodesPayload = finalNodes.map((n) => ({
         repo_file: parseInt(n.id),
@@ -185,14 +217,12 @@ const CodeMap = ({ repoId }) => {
         target: parseInt(e.target),
       }));
 
-      console.log("[Save] Posting node positions:", nodesPayload);
       await axios.post("http://localhost:8000/api/map/nodes/", nodesPayload, {
         headers: { Authorization: `Bearer ${token}` },
       }).catch((err) => {
         console.error("[Save Nodes] Failed:", err.response?.data || err.message);
       });
 
-      console.log("[Save] Posting edges:", edgesPayload);
       await axios.post("http://localhost:8000/api/map/edges/", edgesPayload, {
         headers: { Authorization: `Bearer ${token}` },
       }).catch((err) => {
@@ -204,23 +234,62 @@ const CodeMap = ({ repoId }) => {
     }
   }, [repoId]);
 
+
   useEffect(() => {
     fetchMapData();
   }, [fetchMapData]);
 
   return (
-    <div style={{ height: "100vh", width: "100%" }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        fitView
-      >
-        <Background />
-        <MiniMap nodeColor={(n) => n.style?.backgroundColor || "#ccc"} />
-        <Controls />
-      </ReactFlow>
+    <div style={{ height: "100vh", width: "100%", display: "flex" }}>
+      
+      <div style={{ flex: 1 }}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onNodeClick={handleNodeClick}
+          fitView
+        >
+          <Background />
+          <MiniMap nodeColor={(n) => n.style?.backgroundColor || "#ccc"} />
+          <Controls />
+        </ReactFlow>
+      </div>
+
+      {chatOpen && (
+        <div className="chat-panel">
+          <div className="chat-header">
+            Chat about: {activeFile?.data?.label}
+            <button className="close-btn" onClick={() => setChatOpen(false)}>
+              ✕
+            </button>
+          </div>
+          <div className="chat-messages">
+            {messages.map((m, i) => (
+              <div key={i} className={`message ${m.role}`}>
+                {m.text}
+              </div>
+            ))}
+            {loading && (
+              <div className="message ai loader">
+                <div className="loader-dot"></div>
+                <div className="loader-dot"></div>
+                <div className="loader-dot"></div>
+              </div>
+            )}
+          </div>
+          <div className="chat-input">
+            <input
+              value={currentQuestion}
+              onChange={(e) => setCurrentQuestion(e.target.value)}
+              placeholder="Ask about this file..."
+              onKeyDown={(e) => e.key === "Enter" && sendQuestion()}
+            />
+            <button onClick={sendQuestion}>Send</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
