@@ -13,6 +13,7 @@ class Repository(models.Model):
     is_indexed = models.BooleanField(default=False)
     index_status = models.CharField(max_length=50, default='pending')
     metadata = models.JSONField(null=True, blank=True)
+    has_map = models.BooleanField(default=False)
     pinned_by = models.ManyToManyField(User, related_name="pinned_repositories", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

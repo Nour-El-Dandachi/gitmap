@@ -17,7 +17,10 @@ class NotificationService:
 
     @staticmethod
     def list_for_user(user):
-        return Notification.objects.filter(user=user).order_by('-created_at')
+        return Notification.objects.filter(
+            user=user,
+            is_read=False
+        ).order_by('-created_at')
 
     @staticmethod
     def get(user, notification_id):

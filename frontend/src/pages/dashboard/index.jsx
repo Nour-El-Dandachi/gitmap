@@ -61,6 +61,7 @@ const Dashboard = () => {
               repositories.map((repo) => (
                 <RepositoryBox
                   key={repo.id}
+                  id={repo.id}
                   name={repo.name}
                   createdAt={timeAgo(repo.created_at)}
                 />

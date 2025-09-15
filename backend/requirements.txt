@@ -9,4 +9,8 @@ openai>=1.0.0
 celery==5.3.6
 redis
 sentence-transformers
+anthropic>=0.34.0
+pandas
+openpyxl
+
 
