@@ -4,8 +4,11 @@ from celery import shared_task
 from repositories.models import Repository
 from repositories.services.embedding_service import EmbeddingService
 from sentence_transformers import SentenceTransformer
+import os
 
-model = SentenceTransformer("/app/bge-m3")
+model = None
+if not os.environ.get("CI"):
+    model = SentenceTransformer("/app/bge-m3")
 
 def embed_local(text):
     return model.encode(text).tolist()
