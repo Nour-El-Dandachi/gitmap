@@ -2,39 +2,19 @@ name: CI
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main, dev ]
+    branches: [ main, develop ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_DB: gitmap
-          POSTGRES_USER: gitmap_user
-          POSTGRES_PASSWORD: gitmap_pass
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U gitmap_user -d gitmap"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
-      redis:
-        image: redis:7
-        ports:
-          - 6379:6379
-
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker
+      - name: Set up Docker Compose
         run: docker compose version
 
       - name: Build containers
