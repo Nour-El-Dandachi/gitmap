@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'chat',
     'indexing',
     'map',
+    "metrics",
     
     'social_django',
 
