@@ -8,10 +8,14 @@ from django.conf import settings
 from typing import Optional
 
 
+import os
+from sentence_transformers import SentenceTransformer
+
 class ChatService:
     def __init__(self, model_path: str):
-        self.model = SentenceTransformer(model_path)
-        openai.api_key = settings.OPENAI_API_KEY
+        self.model = None
+        if not os.environ.get("CI"):
+            self.model = SentenceTransformer(model_path)
 
     def embed_query(self, query: str):
         return self.model.encode(query)
