@@ -19,8 +19,9 @@ urlpatterns = [
 
 
     path("<int:repo_id>/important-files/", ImportantFilesForMapView.as_view(), name="important-files"),
-    path("<int:repo_id>/map-ai/", RepoMapAIView.as_view(), name="repo-map-ai"),
 
+    
+    path("<int:repo_id>/map-ai/", RepoMapAIView.as_view(), name="repo-map-ai"),
     path("<int:repo_id>/exists/", RepoMapExistsView.as_view()),
 
    
