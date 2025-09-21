@@ -40,3 +40,50 @@
   transform: translateY(0);
   box-shadow: 0 2px 5px rgba(0,0,0,0.08);
 }
+
+
+.right-header-map{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
+.legend{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 30px;
+  align-items: center;
+}
+
+.stable{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+}
+
+.unstable{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+}
+
+.green-dot{
+  width: 12px;
+    height: 12px;
+    background-color: green;
+    border-radius: 50%;
+}
+
+.red-dot{
+  width: 12px;
+    height: 12px;
+    background-color: red;
+    border-radius: 50%;
+}

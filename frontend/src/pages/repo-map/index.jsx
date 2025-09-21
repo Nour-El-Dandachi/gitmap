@@ -16,12 +16,27 @@ const RepoMapPage = () => {
         <h1>{repoName}</h1>
       </div>
 
-      <button 
-        className="metrics-btn" 
-        onClick={() => window.dispatchEvent(new CustomEvent("runMetrics", { detail: { repoId } }))}
-      >
-        Run Metrics
-      </button>
+      <div className="right-header-map">
+        <div className="legend">
+          <div className="stable">
+            <div className="green-dot"></div>
+            Stable
+
+          </div>
+          <div className="unstable">
+            <div className="red-dot"></div>
+            Unstable
+          </div>
+        </div>
+        <button 
+                className="metrics-btn" 
+                onClick={() => window.dispatchEvent(new CustomEvent("runMetrics", { detail: { repoId } }))}
+              >
+                Run Metrics
+        </button>
+      </div>
+
+      
     </div>
 
     
