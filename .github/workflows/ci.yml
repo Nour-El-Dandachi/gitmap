@@ -9,53 +9,21 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_DB: gitmap
-          POSTGRES_USER: gitmap_user
-          POSTGRES_PASSWORD: gitmap_pass
-        ports: ["5432:5432"]
-        options: >-
-          --health-cmd="pg_isready -U gitmap_user -d gitmap"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
-      redis:
-        image: redis:7
-        ports: ["6379:6379"]
+    env:
+      CI: true
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: Set up Docker Compose
+        run: docker compose version
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r backend/requirements.txt
+      - name: Build containers
+        run: docker compose build
 
       - name: Run migrations
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: gitmap
-          DB_USER: gitmap_user
-          DB_PASSWORD: gitmap_pass
-        run: python backend/manage.py migrate
+        run: docker compose run --rm backend python manage.py migrate
 
       - name: Run tests
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: gitmap
-          DB_USER: gitmap_user
-          DB_PASSWORD: gitmap_pass
-        run: python backend/manage.py test -v 2
+        run: docker compose run --rm backend python manage.py test -v 2
