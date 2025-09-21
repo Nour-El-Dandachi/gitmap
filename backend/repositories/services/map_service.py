@@ -5,6 +5,9 @@ import json
 import anthropic
 from repositories.models import FileContent, RepoFile, Repository
 
+import pandas as pd
+from io import StringIO
+
 claude_client = anthropic.Anthropic(api_key=os.environ.get("CLAUDE_KEY"))
 
 def parse_php_imports(content: str) -> list[str]:
@@ -201,8 +204,16 @@ def get_codebase_dependency_table(repo_id: int):
     return generate_dependency_table(parsed)
 
 
-import pandas as pd
-from io import StringIO
+
+
+
+
+
+
+
+
+
+    
 
 def markdown_table_to_excel(markdown_str: str, output_path: str = "dependencies.xlsx"):
     markdown_str = markdown_str.strip()
