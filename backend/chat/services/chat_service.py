@@ -6,10 +6,7 @@ import numpy as np
 import openai
 from django.conf import settings
 from typing import Optional
-
-
 import os
-from sentence_transformers import SentenceTransformer
 
 class ChatService:
     def __init__(self, model_path: str):

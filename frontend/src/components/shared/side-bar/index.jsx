@@ -1,6 +1,6 @@
 import React from "react";
 import "./side-bar.css";
-import { Bell, Github, LayoutDashboard, Search, ChevronDown, UserRound } from "lucide-react";
+import { Bell, Github, LayoutDashboard, Search, ChevronDown, UserRound, LogOut} from "lucide-react";
 import gitmapLogo from "../../../assets/logos/gitmap_3.png";
 import { useSelector } from "react-redux";
 
@@ -15,7 +15,6 @@ const SideBar = () => {
 
   return (
     <div className="side-bar">
-      {/* Profile */}
       <div className="header-img">
         <img src={gitmapLogo} alt="logo" className="logo" />
       </div>
@@ -24,7 +23,6 @@ const SideBar = () => {
         <div className="profile-name">{user?.name}</div>
       </div>
 
-      {/* Menu */}
       <div className="bar-menu">
         <div
           className={`menu-item ${isActive("/dashboard") ? "active" : ""}`}
@@ -43,6 +41,12 @@ const SideBar = () => {
           onClick={() => navigate("/notifications")}
         >
           <Bell /> Notifications
+        </div>
+        <div
+          className={`menu-item ${isActive("/login") ? "active" : ""}`}
+          onClick={() => navigate("/login")}
+        >
+          <LogOut /> Log out
         </div>
       </div>
     </div>

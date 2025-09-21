@@ -60,7 +60,7 @@ const Notifications = () => {
           <Search />
           <input
             className="search-input"
-            placeholder="Search for anything"
+            placeholder="Search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />

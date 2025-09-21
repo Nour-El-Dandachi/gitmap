@@ -6,6 +6,7 @@ from scipy.io import arff
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.tree import DecisionTreeClassifier
 
 ARTIFACT_DIR = Path(__file__).resolve().parent / "artifacts"
 ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
@@ -29,12 +30,10 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.3, random_state=42, stratify=y
 )
 
-clf = RandomForestClassifier(
-    n_estimators=200,
-    max_depth=None,
+clf = DecisionTreeClassifier(
+    max_depth=None,          
     class_weight="balanced",
-    random_state=42,
-    n_jobs=-1,
+    random_state=42
 )
 clf.fit(X_train, y_train)
 
@@ -44,6 +43,3 @@ print("Accuracy:", accuracy_score(y_test, y_pred))
 joblib.dump(clf, MODEL_PATH)
 with open(FEATURES_PATH, "w") as f:
     json.dump(list(clf.feature_names_in_), f)
-
-print(f"\n Saved: {MODEL_PATH}")
-print(f" Saved: {FEATURES_PATH}")
