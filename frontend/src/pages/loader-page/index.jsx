@@ -9,13 +9,13 @@ const LoaderPage = () => {
   useEffect(() => {
     let current = 0;
     const interval = setInterval(() => {
-      current += 5;
+      current += 10; // increase by 10%
       if (current >= 100) {
         clearInterval(interval);
         navigate("/map"); 
       }
       setProgress(current);
-    }, 1000);
+    }, 500); // every 0.5 seconds
 
     return () => clearInterval(interval);
   }, [navigate]);
