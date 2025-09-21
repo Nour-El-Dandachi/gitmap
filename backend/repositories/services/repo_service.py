@@ -9,7 +9,6 @@ from django.conf import settings
 
 
 from repositories.models import Repository, RepoFile
-from indexing.models import IndexingJob
 from django.db.models import Q
 from repositories.tasks import embed_repository_task
 
@@ -126,7 +125,6 @@ class RepoService:
             }
         )
 
-        IndexingJob.objects.create(repository=repo, status="pending")
 
         folders = RepoService.save_repo_tree(repo)
         repo.index_status = "tree_saved"
