@@ -20,7 +20,6 @@ def load_arff(path):
     df["defects"] = df["defects"].apply(lambda x: x.decode("utf-8"))
     return df
 
-# Load datasets
 df_jm1 = load_arff("ml_experiments/jm1.arff.txt")
 df_cm1 = load_arff("ml_experiments/cm1.arff.txt")
 df = pd.concat([df_jm1, df_cm1], ignore_index=True)
@@ -28,12 +27,10 @@ df = pd.concat([df_jm1, df_cm1], ignore_index=True)
 X = df.drop(columns=["defects"])
 y = df["defects"]
 
-# Split
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.3, random_state=42, stratify=y
 )
 
-# Train model
 clf = RandomForestClassifier(
     n_estimators=100,
     max_depth=None,
@@ -61,17 +58,14 @@ import seaborn as sns
 
 print(classification_report(y_test, y_pred))
 
-# Custom brand colors
 PRIMARY = "#948BFC"
 LIGHT = "#D6D3F3"
 DARK = "#131325"
 
-# Create a 3-point gradient colormap for confusion matrix
 custom_cmap = mcolors.LinearSegmentedColormap.from_list(
     "brand_cmap", [LIGHT, PRIMARY, DARK], N=256
 )
 
-# Confusion Matrix with stronger normalization
 cm = confusion_matrix(y_test, y_pred)
 plt.figure(figsize=(6, 5))
 sns.heatmap(
@@ -92,7 +86,6 @@ plt.yticks(color=DARK, rotation=0)
 plt.savefig(ARTIFACT_DIR / "confusion_matrix.png", facecolor="white")
 plt.close()
 
-# ROC Curve
 y_proba = clf.predict_proba(X_test)[:, 1]
 roc_disp = RocCurveDisplay.from_predictions(
     y_test,
@@ -101,7 +94,7 @@ roc_disp = RocCurveDisplay.from_predictions(
     color=PRIMARY,
     name="ROC Curve"
 )
-plt.plot([0, 1], [0, 1], "--", color=LIGHT)  # baseline
+plt.plot([0, 1], [0, 1], "--", color=LIGHT)
 plt.title("ROC Curve", color=DARK, fontsize=14, weight="bold")
 plt.xlabel("False Positive Rate", color=DARK, fontsize=12)
 plt.ylabel("True Positive Rate", color=DARK, fontsize=12)
@@ -110,7 +103,6 @@ plt.yticks(color=DARK)
 plt.savefig(ARTIFACT_DIR / "roc_curve.png", facecolor="white")
 plt.close()
 
-# Save metrics JSON
 metrics = {
     "accuracy": accuracy_score(y_test, y_pred),
     "precision": precision_score(y_test, y_pred, average="binary", pos_label="true"),
