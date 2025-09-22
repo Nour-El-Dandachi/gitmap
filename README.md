@@ -92,6 +92,9 @@ View the live ER diagram here: [Eraser Workspace](https://app.eraser.io/workspac
 | --------------------------------------- | ------------------------------------- | ------------------------------------- |
 | ![Landing](./readme/demo/services.png) | ![fsdaf](./readme/demo/validations.png) | ![fsdaf](./readme/demo/test.png) |
 
+### Running Tests  
+
+All tests can be run inside Docker containers without installing extra tools locally: use `docker compose run --rm backend python manage.py test -v 2` for backend (Django) tests and `docker compose run --rm frontend npm test -- --watchAll=false` for frontend (React) tests. The `--rm` flag ensures containers are removed after execution, keeping the environment clean. These same tests also run automatically in CI (GitHub Actions) on every push and pull request to the `main` and `dev` branches.
 
 <br><br>
 
@@ -112,6 +115,31 @@ View the live ER diagram here: [Eraser Workspace](https://app.eraser.io/workspac
 
 <br><br>
 
+<br><br>
+
+### Machine Learning
+
+Our Random Forest model was trained on defect prediction data and evaluated on a held-out test set. The key metrics are:
+
+**Accuracy:** 0.82 → The model correctly classifies ~82% of files overall.
+
+**Precision:** 0.56 → When the model predicts a defect, it is correct about 56% of the time.
+
+**Recall:** 0.23 → The model detects ~23% of actual defective files, meaning some are missed.
+
+**F1 Score:** 0.32 → Balances precision and recall, showing moderate performance on defect detection.
+
+These results indicate that the model is strong at identifying non-defective files, but recall for defective files is lower, a typical challenge in imbalanced datasets.
+
+<br><br>
+
+
+| Confusion Matrix                          | ROC Curve                      |
+| --------------------------------------- | ------------------------------------- |
+| ![Landing](./readme/demo/confusion_matrix.png) | ![fsdaf](./readme/demo/roc_curve.png) |
+
+<br><br>
+
 <!-- Deployment -->
 <img src="./readme/title7.svg"/>
 
@@ -119,7 +147,7 @@ View the live ER diagram here: [Eraser Workspace](https://app.eraser.io/workspac
 
 
 
-| Postman API 1                            | Postman API 2                       | Postman API 3                        |
+| API 1                            | API 2                       | API 3                        |
 | --------------------------------------- | ------------------------------------- | ------------------------------------- |
 | ![Landing](./readme/demo/api_01.png) | ![fsdaf](./readme/demo/api_02.png) | ![fsdaf](./readme/demo/api_03.png) |
 
