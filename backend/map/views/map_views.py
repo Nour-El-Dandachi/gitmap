@@ -66,10 +66,61 @@ class FileEdgeListCreateView(APIView):
 
 
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 
 class MapDataView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_summary="Get code map data",
+        operation_description="Fetches the code map (nodes and edges) for a repository. Requires Bearer token authentication.",
+        manual_parameters=[
+            openapi.Parameter(
+                "repo_id",
+                openapi.IN_PATH,
+                description="Repository ID",
+                type=openapi.TYPE_INTEGER,
+                required=True,
+            ),
+        ],
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "nodes": openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        description="List of nodes representing repository files",
+                        items=openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                "file_id": openapi.Schema(type=openapi.TYPE_INTEGER, example=352),
+                                "file_name": openapi.Schema(type=openapi.TYPE_STRING, example="ViewCapsuleController.php"),
+                                "x": openapi.Schema(type=openapi.TYPE_NUMBER, format="float", example=160.0),
+                                "y": openapi.Schema(type=openapi.TYPE_NUMBER, format="float", example=180.0),
+                            },
+                        ),
+                    ),
+                    "edges": openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        description="List of edges representing dependencies between files",
+                        items=openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                "source": openapi.Schema(type=openapi.TYPE_INTEGER, example=353),
+                                "target": openapi.Schema(type=openapi.TYPE_INTEGER, example=352),
+                            },
+                        ),
+                    ),
+                },
+            ),
+            401: openapi.Response("Unauthorized"),
+        },
+    )
     def get(self, request, repo_id):
         repo_file_ids = RepoFile.objects.filter(repository_id=repo_id).values_list("id", flat=True)
 

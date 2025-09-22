@@ -198,3 +198,15 @@ CELERY_TASK_SERIALIZER = "json"
 
 
 BGE_M3_MODEL_PATH = os.getenv("BGE_M3_MODEL_PATH", "/app/bge-m3")
+
+
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Bearer token. Format: **Bearer <token>**",
+        }
+    },
+}
