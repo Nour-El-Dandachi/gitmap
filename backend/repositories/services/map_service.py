@@ -4,11 +4,20 @@ import os
 import json
 import anthropic
 from repositories.models import FileContent, RepoFile, Repository
-
 import pandas as pd
 from io import StringIO
 
-claude_client = anthropic.Anthropic(api_key=os.environ.get("CLAUDE_KEY"))
+_claude_client = None
+
+def get_claude_client():
+    global _claude_client
+    if _claude_client is None:
+        api_key = os.getenv("CLAUDE_KEY")
+        if not api_key:
+            raise RuntimeError("CLAUDE_KEY not set. Cannot initialize Anthropic client.")
+        _claude_client = anthropic.Anthropic(api_key=api_key)
+    return _claude_client
+
 
 def parse_php_imports(content: str) -> list[str]:
     imports = set()
@@ -126,7 +135,8 @@ Input:
 {json.dumps(files, indent=2)}
 """
 
-    response = claude_client.messages.create(
+    client = get_claude_client()
+    response = client.messages.create(
         model="claude-sonnet-4-20250514",
         max_tokens=1000,
         temperature=0,
@@ -167,7 +177,8 @@ Strict rules:
 - Maintain accuracy: every ID in the table must match one from the input.
 """
 
-    response = claude_client.messages.create(
+    client = get_claude_client()
+    response = client.messages.create(
         model="claude-sonnet-4-20250514",
         max_tokens=2000,
         temperature=0,
@@ -190,7 +201,6 @@ Strict rules:
     }
 
 
-
 def get_codebase_dependency_table(repo_id: int):
     important_files = get_key_files_for_map(repo_id)
     if "error" in important_files:
@@ -203,17 +213,6 @@ def get_codebase_dependency_table(repo_id: int):
 
     return generate_dependency_table(parsed)
 
-
-
-
-
-
-
-
-
-
-
-    
 
 def markdown_table_to_excel(markdown_str: str, output_path: str = "dependencies.xlsx"):
     markdown_str = markdown_str.strip()
@@ -230,4 +229,3 @@ def markdown_table_to_excel(markdown_str: str, output_path: str = "dependencies.
     df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
     df.to_excel(output_path, index=False)
-

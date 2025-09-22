@@ -63,28 +63,30 @@ class ChatService:
         top_chunks = self.search_relevant_chunks(file, question)
         context = "\n\n".join(chunk.content for chunk in top_chunks)
 
-        
         prompt = f"""You are an assistant answering questions about a specific code file.
-            The user asked:
-            \"{question}\"
+        The user asked:
+        \"{question}\"
 
-            Relevant code snippets:
-            {context}
+        Relevant code snippets:
+        {context}
 
-            Answer clearly and helpfully."""
+        Answer clearly and helpfully."""
 
-        try:
-            response = openai.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.3
-            )
-            answer = response.choices[0].message.content.strip()
-        except Exception as e:
-            answer = f"(OpenAI error: {e})"
+        answer = "(AI unavailable in CI environment)"
 
+        
+        if not os.environ.get("CI"):
+            try:
+                response = openai.chat.completions.create(
+                    model="gpt-4",
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.3
+                )
+                answer = response.choices[0].message.content.strip()
+            except Exception as e:
+                answer = f"(OpenAI error: {e})"
+
+        
         ChatMessage.objects.create(session=session, sender="ai", message=answer)
 
         return answer
