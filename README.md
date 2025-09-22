@@ -19,7 +19,12 @@
 
 ### ER Diagram
 
+View the live ER diagram here: [Eraser Workspace](https://app.eraser.io/workspace/NIzKPZnY8ZkSBtb8iS99?origin=share)
+
 <img src="./readme/system-design/er-diagram.png"/>
+
+
+
 
 ### System Architecture
 
@@ -89,6 +94,23 @@
 
 <br><br>
 
+### AI Agent
+
+**Simple Inputs:** The user just provides a GitHub repository URL.
+
+**Smart Processing:** The system fetches code and commits, then the AI agent indexes and analyzes the repository.
+
+**Clear Outputs:** The AI agent delivers easy-to-understand answers and insights based on the code.
+
+<br><br>
+
+
+| AI Agent Explanation                       |
+| --------------------------------------- |
+| ![Landing](./readme/demo/agent-exp.png) |
+
+<br><br>
+
 <!-- Deployment -->
 <img src="./readme/title7.svg"/>
 
@@ -98,7 +120,7 @@
 
 | Postman API 1                            | Postman API 2                       | Postman API 3                        |
 | --------------------------------------- | ------------------------------------- | ------------------------------------- |
-| ![Landing](./readme/demo/api03.png) | ![fsdaf](./readme/demo/api02.png) | ![fsdaf](./readme/demo/api01.png) |
+| ![Landing](./readme/demo/api_01.png) | ![fsdaf](./readme/demo/api_02.png) | ![fsdaf](./readme/demo/api_03.png) |
 
 <br><br>
 
