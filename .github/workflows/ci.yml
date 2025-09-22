@@ -25,5 +25,8 @@ jobs:
       - name: Run migrations
         run: docker compose run --rm backend python manage.py migrate
 
-      - name: Run tests
+      - name: Run backend tests
         run: docker compose run --rm backend python manage.py test -v 2
+
+      - name: Run frontend tests
+        run: docker compose run --rm frontend npm test -- --watchAll=false
