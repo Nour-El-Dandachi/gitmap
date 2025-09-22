@@ -1,0 +1,15 @@
+Django>=5.2
+djangorestframework
+python-dotenv
+django-cors-headers
+psycopg2-binary
+social-auth-app-django
+djangorestframework-simplejwt
+openai>=1.0.0
+celery==5.3.6
+redis
+sentence-transformers
+anthropic>=0.34.0
+pandas
+openpyxl
+lizard>=1.17.12

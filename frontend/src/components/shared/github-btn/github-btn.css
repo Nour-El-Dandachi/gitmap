@@ -1,0 +1,23 @@
+.github-btn-wrapper {
+    margin-top: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 5px;
+  padding: 0.5rem;
+  gap: 20px;
+  border: 1px solid #131325;
+  cursor: pointer;
+  background-color: white;
+  width: 84%;
+}
+
+.github-img {
+  width: 35px;
+  height: 35px;
+}
+
+.github-btn-text {
+  font-weight: 400;
+  font-size: 18px;
+}

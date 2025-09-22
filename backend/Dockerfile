@@ -1,13 +1,18 @@
-FROM php:8.2-fpm
+FROM python:3.11
 
-WORKDIR /var/www/html
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-RUN apt-get update && apt-get install -y \
-    git curl zip unzip libzip-dev libpng-dev libonig-dev \
-    && docker-php-ext-install pdo pdo_mysql zip
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+RUN apt-get update && apt-get install -y cloc && apt-get purge -y lizard || true && \
+    pip install --no-cache-dir --upgrade lizard && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY . .
 
-RUN curl -sS https://getcomposer.org/installer | php \
-    && mv composer.phar /usr/local/bin/composer \
-    && composer install
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

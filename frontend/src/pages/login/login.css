@@ -1,0 +1,32 @@
+.login-page {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.login-right-side {
+  background-color: #131325;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.big-logo{
+  width: 450px;
+  height: 450px;
+}
+.brand {
+  text-align: center;
+}
+
+.brand h1 {
+  color: white;
+  font-size: 2rem;
+  margin-top: 1rem;
+}
+
+.brand .dot {
+  color: #948BFC;
+}

@@ -1,0 +1,22 @@
+
+.loader-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 100px;
+}
+
+.progress-bar {
+  width: 80%;
+  height: 20px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.progress {
+  height: 100%;
+  background: linear-gradient(90deg, #131325, #948BFC);
+  transition: width 0.5s ease;
+}

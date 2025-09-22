@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -9,17 +7,20 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/var/www/html
-    working_dir: /var/www/html
+      - ./backend:/app
+      - ./backend/bge-m3:/app/bge-m3
+    working_dir: /app
     depends_on:
       - db
     environment:
       DB_HOST: db
-      DB_PORT: 3306
-      DB_DATABASE: gitmap
-      DB_USERNAME: root
-      DB_PASSWORD:
-    command: php artisan serve --host=0.0.0.0 --port=8000
+      DB_PORT: 5432
+      DB_NAME: gitmap
+      DB_USER: gitmap_user
+      DB_PASSWORD: gitmap_pass
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
 
   frontend:
     build:
@@ -29,39 +30,75 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/app:delegated
     working_dir: /app
     command: npm start
     stdin_open: true
     tty: true
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      - FAST_REFRESH=false
+
 
   db:
-    image: mysql:8.0
+    image: postgres:15
     container_name: db
-    ports:
-      - "3306:3306"
+    restart: always
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: gitmap
+      POSTGRES_DB: gitmap
+      POSTGRES_USER: gitmap_user
+      POSTGRES_PASSWORD: gitmap_pass
+    ports:
+      - "5432:5432"
     volumes:
-      - db_data:/var/lib/mysql
+      - pg_data:/var/lib/postgresql/data
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
     restart: always
     ports:
-      - "8080:80"
+      - "8081:80"
     environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
-      PMA_USER: root
-      PMA_PASSWORD:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
     depends_on:
       - db
+    
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+  
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gitmap-celery
+    command: celery -A gitmap_backend worker --loglevel=info
+    volumes:
+      - ./backend:/app
+      - ./backend/bge-m3:/app/bge-m3
+    working_dir: /app
+    depends_on:
+      - backend
+      - redis
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: gitmap
+      DB_USER: gitmap_user
+      DB_PASSWORD: gitmap_pass
+  
+  n8n:
+    image: n8nio/n8n
+    container_name: gitmap-n8n
+    ports:
+      - "5678:5678"
+    volumes:
+      - ./n8n_data:/home/node/.n8n
+
 
 volumes:
-  db_data:
+  pg_data:

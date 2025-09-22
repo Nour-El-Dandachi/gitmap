@@ -1,0 +1,17 @@
+.input-wrapper {
+  display: flex;
+  flex-direction: row;
+  border-radius: 5px;
+  padding: 0.5rem;
+  gap: 8px;
+  border: 1px solid #131325;
+  width: 100%;
+}
+
+.input-wrapper input {
+  margin: 0;
+  border: none;
+  outline: none; 
+  box-shadow: none;
+}
+

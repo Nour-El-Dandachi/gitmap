@@ -1,0 +1,17 @@
+.header{
+    border-bottom: 1px solid rgb(160, 159, 159);
+    
+    height: 70px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 2rem;
+}
+
+
+
+.logo{
+    width: 200px;
+    height: 90%;
+}

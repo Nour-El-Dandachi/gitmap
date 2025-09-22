@@ -1,0 +1,82 @@
+.dashboard-page{
+    display: flex;
+    flex-direction: row;
+}
+
+.dashboard-right{
+    width: 90%;
+}
+.recently-viewed-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    padding: 2rem;
+}
+.repositories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  padding: 1rem;
+  padding-left: 2rem;
+}
+.static-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+}
+
+.card-widget {
+  background: #fff;
+  border: 1px solid #e9e9ef;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-widget:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.card-header {
+  border-left: 4px solid #948BFC; /* brand purple accent */
+  padding-left: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.card-header h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2d2d2d;
+}
+
+.card-text {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.card-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #948BFC;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #777;
+}
