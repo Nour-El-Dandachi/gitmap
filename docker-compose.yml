@@ -31,6 +31,7 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/app:delegated
+      - /app/node_modules
     working_dir: /app
     command: npm start
     stdin_open: true
@@ -39,6 +40,7 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
       - FAST_REFRESH=false
+
 
 
   db:

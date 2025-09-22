@@ -55,24 +55,77 @@ class FetchFileContentView(APIView):
         except Exception as e:
             return responseJSON({"error": str(e)}, status="error", status_code=500)
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+
+
 class AddRepositoryView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_summary="Add a GitHub repository",
+        operation_description="Start indexing a GitHub repository by providing its URL (and optional branch). Requires Bearer token authentication.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "url": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="GitHub repository URL",
+                    example="https://github.com/Nour-El-Dandachi/cinema_client"
+                ),
+                "branch": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="Branch name (defaults to 'main')",
+                    example="develop"
+                ),
+            },
+            required=["url"],
+        ),
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "status": openapi.Schema(type=openapi.TYPE_STRING, example="success"),
+                    "payload": openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            "message": openapi.Schema(type=openapi.TYPE_STRING, example="Indexing started."),
+                            "repo_id": openapi.Schema(type=openapi.TYPE_INTEGER, example=3),
+                            "repo_name": openapi.Schema(type=openapi.TYPE_STRING, example="cinema_client"),
+                        },
+                    ),
+                },
+            ),
+            400: openapi.Response("Bad Request"),
+            500: openapi.Response("Internal Server Error"),
+        },
+    )
     def post(self, request):
         try:
             url = request.data.get("url")
             branch = request.data.get("branch", "main")
 
             if not url:
-                return responseJSON({"error": "Repository URL is required."}, status="error", status_code=400)
+                return responseJSON(
+                    {"error": "Repository URL is required."},
+                    status="error",
+                    status_code=400
+                )
 
-            repo = RepoService.start_indexing_workflow(user=request.user, url=url, branch=branch)
+            repo = RepoService.start_indexing_workflow(
+                user=request.user, url=url, branch=branch
+            )
 
-            return responseJSON({
-                "message": "Indexing started.",
-                "repo_id": repo.id,
-                "repo_name": repo.name
-            }, status="success")
+            return responseJSON(
+                {
+                    "message": "Indexing started.",
+                    "repo_id": repo.id,
+                    "repo_name": repo.name,
+                },
+                status="success",
+            )
 
         except ValueError as e:
             return responseJSON({"error": str(e)}, status="error", status_code=400)

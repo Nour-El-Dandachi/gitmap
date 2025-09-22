@@ -287,8 +287,7 @@ const CodeMap = ({ repoId }) => {
   useEffect(() => {
     const handleRunMetrics = async (e) => {
       const { repoId } = e.detail;
-      console.log(repoId);
-      console.log("Token being sent:", token);
+      
 
       try {
         await axios.post(
@@ -302,7 +301,7 @@ const CodeMap = ({ repoId }) => {
           }
         );
 
-        console.log("Metrics extraction started");
+        
         await new Promise((resolve) => setTimeout(resolve, 3000));
 
         const predRes = await axios.post(
@@ -317,7 +316,7 @@ const CodeMap = ({ repoId }) => {
         );
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
-        console.log("Predict response:", predRes.data);
+        
 
 
         const results = predRes.data.results;
