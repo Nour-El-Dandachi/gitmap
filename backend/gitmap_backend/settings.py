@@ -63,9 +63,14 @@ INSTALLED_APPS = [
     "metrics",
     
     'social_django',
-
+    "drf_yasg",
 ]
 
+SWAGGER_SETTINGS = {
+    "USE_SESSION_AUTH": False,           
+    "DOC_EXPANSION": "none",
+    "DEFAULT_MODEL_RENDERING": "example",
+}
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',

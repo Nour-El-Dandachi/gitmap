@@ -13,3 +13,6 @@ anthropic>=0.34.0
 pandas
 openpyxl
 lizard>=1.17.12
+matplotlib
+seaborn
+drf-yasg
