@@ -59,7 +59,6 @@ INSTALLED_APPS = [
     'repositories',
     'notifications',
     'chat',
-    'indexing',
     'map',
     "metrics",
     

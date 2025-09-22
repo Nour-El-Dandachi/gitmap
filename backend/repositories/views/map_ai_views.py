@@ -4,15 +4,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from repositories.services.map_ai_service import generate_map_with_ai
-
-# class RepoMapAIView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request, repo_id):
-#         graph = generate_map_with_ai(repo_id)
-#         return Response(graph)
-
-
 from repositories.services.map_service import get_key_files_for_map
 from repositories.services.map_service import get_codebase_dependency_table
 

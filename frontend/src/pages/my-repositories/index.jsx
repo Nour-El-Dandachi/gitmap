@@ -58,7 +58,7 @@ const MyRepositories = () => {
           <Search />
           <input
             className="search-input"
-            placeholder="Search for anything"
+            placeholder="Search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -68,6 +68,7 @@ const MyRepositories = () => {
           {filteredRepos.length > 0 ? (
             filteredRepos.map((repo) => (
               <RepositoryBox
+                id={repo.id}
                 key={repo.id}
                 name={repo.name}
                 createdAt={timeAgo(repo.created_at)}

@@ -17,7 +17,7 @@ def extract_metrics_for_file(repo_file: RepoFile):
         print(f"No content found for {repo_file.path}")
         return {}
 
-    ext = repo_file.extension or ""
+    ext = repo_file.extension
     with tempfile.NamedTemporaryFile(delete=False, suffix=f".{ext}") as tmp:
         tmp.write(file_content.content.encode("utf-8"))
         tmp_path = tmp.name

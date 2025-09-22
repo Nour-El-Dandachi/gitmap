@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: docker compose version
+
+      - name: Build containers
+        run: docker compose build
+
+      - name: Run migrations
+        run: docker compose run --rm backend python manage.py migrate
+
+      - name: Run tests
+        run: docker compose run --rm backend python manage.py test -v 2

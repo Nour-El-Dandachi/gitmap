@@ -3,80 +3,87 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  align-items: start;
-  padding: 10px;
-  border-right: 1px solid rgb(160, 159, 159);
+  align-items: center;
+  padding: 1.5rem 1rem;
+  border-right:1px solid rgb(160, 159, 159);
+  background: #fff;
 }
 
 .bar-profile {
-  
   display: flex;
-  flex-direction: row;
-  gap: 10px;
   align-items: center;
-  justify-content: center;
+  gap: 12px;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  padding: 0 0.5rem;
 }
 
 .profile-photo {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  border: 1px solid black;
+  border: 1px solid #000000;
   display: flex;
-  align-items:center ;
+  align-items: center;
   justify-content: center;
 }
 
-.profile-name{
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
+
+.profile-name {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
 }
 
-.bar-search{
+.bar-search {
   display: flex;
-  flex-direction: row;
-  justify-content: start;
   align-items: center;
-  gap: 10px;
-  background-color: rgb(223, 223, 223);
-  padding: 0.7rem 0.5rem;
-  width: 85%;
-  border-radius: 5px;
-
+  gap: 8px;
+  background-color: #f4f4fb;
+  padding: 0.6rem 0.8rem;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #e0e0ef;
+  margin-bottom: 1.5rem;
 }
 
-
-.search-input{
-  background-color: rgb(223, 223, 223);
-  margin: 0;
+.search-input {
+  background-color: transparent;
   border: none;
-  outline: none; 
+  outline: none;
+  flex: 1;
+  font-size: 0.9rem;
+  color: #333;
 }
 
-.bar-menu{
-  padding-top: 1rem;
+.bar-menu {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  width: 85%;
+  gap: 0.6rem;
+  width: 100%;
 }
 
 .menu-item {
   display: flex;
-  flex-direction: row;
-  justify-content: start;
   align-items: center;
-  gap: 10px;
-  padding: 0.7rem 0.5rem;
-  width: 100%;
-  border-radius: 5px;
+  gap: 12px;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
   cursor: pointer;
+  color: #444;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.menu-item:hover {
+  background-color: #f0efff;
+  color: #2f2a8c;
 }
 
 .menu-item.active {
-  background-color: #d1cefb;
+  background-color: #e8e6ff;
+  color: #2f2a8c;
+  font-weight: 600;
 }

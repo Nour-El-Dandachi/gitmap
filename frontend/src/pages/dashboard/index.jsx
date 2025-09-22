@@ -51,7 +51,47 @@ const Dashboard = () => {
       <div className="dashboard-right">
         <Header location={"Dashboard"} /> 
         <AddBox />
+        <div className="static-cards">
+  <div className="card-widget">
+    <div className="card-header">
+      <h4>Explore. Understand. Stay Updated.</h4>
+    </div>
+    <p className="card-text">AI-powered navigation for your repositories</p>
+  </div>
+
+  <div className="card-widget">
+    <div className="card-header">
+      <h4>Quick Stats</h4>
+    </div>
+    <div className="card-stats">
+      <div>
+        <span className="stat-number">12</span>
+        <span className="stat-label">Questions</span>
+      </div>
+      <div>
+        <span className="stat-number">5</span>
+        <span className="stat-label">Alerts</span>
+      </div>
+      <div>
+        <span className="stat-number">{repositories.length}</span>
+        <span className="stat-label">Repos</span>
+      </div>
+    </div>
+  </div>
+
+  <div className="card-widget">
+    <div className="card-header">
+      <h4>Pro Tip</h4>
+    </div>
+    <p className="card-text">Pin your most important repos for faster access</p>
+  </div>
+</div>
+
+
+
+
         <div className="box">
+
           <div className="recently-viewed-box">
             <h3>Recently Viewed</h3>
           </div>

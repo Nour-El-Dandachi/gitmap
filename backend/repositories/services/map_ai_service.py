@@ -1,17 +1,23 @@
 # repositories/services/map_ai_service.py
-
 import os
 import json
 from openai import OpenAI
 from repositories.services.map_service import build_file_imports
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+_client = None
+
+def get_openai_client():
+    global _client
+    if _client is None:
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise RuntimeError("OPENAI_API_KEY not set. Cannot initialize OpenAI client.")
+        _client = OpenAI(api_key=api_key)
+    return _client
 
 def generate_map_with_ai(repo_id: int):
-    
     repo_json = build_file_imports(repo_id)
 
-    
     prompt = f"""
         You are given the following repository structure with files and their imports:
 
@@ -38,11 +44,11 @@ def generate_map_with_ai(repo_id: int):
         8. JSON must be syntactically valid — no comments, no extra text, no markdown fences.
 
         Return only the JSON.
-        """
+    """
 
-    
+    client = get_openai_client()
     response = client.chat.completions.create(
-        model="gpt-4o-mini",  
+        model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],
         temperature=0
     )
@@ -50,7 +56,6 @@ def generate_map_with_ai(repo_id: int):
     result_text = response.choices[0].message.content.strip()
 
     try:
-        return json.loads(result_text)  
+        return json.loads(result_text)
     except Exception:
-        
         return {"error": "Invalid JSON from AI", "raw": result_text}

@@ -9,7 +9,6 @@ from django.conf import settings
 
 
 from repositories.models import Repository, RepoFile
-from indexing.models import IndexingJob
 from django.db.models import Q
 from repositories.tasks import embed_repository_task
 
@@ -34,9 +33,6 @@ class RepoService:
 
     @staticmethod 
     def get_user_repositories(user):
-        """
-        Returns all repositories that belong to a given user.
-        """
         return Repository.objects.filter(user=user).order_by("-created_at")
     
     @staticmethod
@@ -129,7 +125,6 @@ class RepoService:
             }
         )
 
-        IndexingJob.objects.create(repository=repo, status="pending")
 
         folders = RepoService.save_repo_tree(repo)
         repo.index_status = "tree_saved"
@@ -225,7 +220,8 @@ class RepoService:
 
     @staticmethod
     def ask_ai_for_folders(repo_name, description, languages, folders):
-        openai.api_key = settings.OPENAI_API_KEY
+        
+        openai.api_key = getattr(settings, "OPENAI_API_KEY", None)
 
         prompt = f"""
         You are an AI system helping index GitHub repositories.
@@ -241,6 +237,14 @@ class RepoService:
         ["src", "api", "app/services"]
         """
 
+        
+        result = []
+
+        
+        if os.environ.get("CI") or not openai.api_key:
+            print("Skipping OpenAI folder selection (CI mode or no API key).")
+            return result
+
         try:
             response = openai.chat.completions.create(
                 model="gpt-4",
@@ -252,10 +256,10 @@ class RepoService:
             return json.loads(content)
         except json.JSONDecodeError:
             print("AI returned invalid JSON")
-            return []
         except Exception as e:
             print("AI folder selection failed:", e)
-            return []
+
+        return result
 
     @staticmethod
     def get_latest_commit_sha(owner: str, repo: str, branch: str = "main"):

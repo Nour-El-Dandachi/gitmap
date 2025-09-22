@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.11.0",
     "dagre": "^0.8.5",
+    "html-to-image": "^1.11.13",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.542.0",
     "react": "^19.1.1",

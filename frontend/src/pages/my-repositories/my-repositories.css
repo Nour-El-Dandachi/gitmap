@@ -1,12 +1,36 @@
-.repo-search{
-    display: flex;
-  flex-direction: row;
-  justify-content: start;
+.repo-search {
+  display: flex;
   align-items: center;
   gap: 10px;
-  background-color: rgb(223, 223, 223);
-  padding: 0.7rem 0.5rem;
+  background: #fff;
+  border: 1px solid #e0e0ef;
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
   width: 40%;
-  border-radius: 5px;
   margin: 1rem 2rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.repo-search:focus-within {
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+}
+
+.repo-search input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 0.95rem;
+  background: transparent;
+  color: #333;
+}
+
+.repo-search svg {
+  color: #777;
+  transition: color 0.2s ease;
+}
+
+.repo-search:focus-within svg {
+  color: #6c63ff;
 }

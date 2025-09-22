@@ -1,35 +1,51 @@
 .add-box {
   display: flex;
-  flex-direction: row;
-  gap: 20px;
-  width: 100%;
-  padding: 1rem 2rem;
+  gap: 12px;
+  width: 95%;
+  padding: 1.5rem 2rem;
   border-bottom: 1px solid rgb(160, 159, 159);
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
 }
 
 .url-box {
-  display: flex;
-  background-color: #d1cefb;
-  width: 80%;
-  height: 50px;
-  border-radius: 5px;
-  align-items: center;
-  text-align: start;
-  padding-left: 2rem;
-  border: none;
+  flex: 1;
+  height: 48px;
+  border-radius: 10px;
+  border: 1px solid #d6d6e8;
+  background: #fff;
+  padding: 0 1rem;
+  font-size: 0.95rem;
+  color: #333;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.url-box:focus {
+  border-color: #948BFC;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
   outline: none;
 }
 
 .send-icon {
-  cursor: pointer;
+  width: 48px;
+  height: 48px;
+  background: #948BFC;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.send-icon:hover {
+  background: #766ddb;
+  transform: translateY(-2px);
 }
 
 .status-msg {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
+  margin-left: 2rem;
+  font-size: 0.85rem;
+  color: #666;
 }

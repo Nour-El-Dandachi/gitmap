@@ -11,7 +11,7 @@ EXCLUDED_DIR_KEYWORDS = [
 ]
 
 def get_mappable_files(repo_id: int):
-    """Return only meaningful code files for map building"""
+    
     qs = RepoFile.objects.filter(
         repository_id=repo_id,
         is_indexed=True,
@@ -25,7 +25,7 @@ def get_mappable_files(repo_id: int):
         if ext not in ALLOWED_EXTENSIONS:
             continue
 
-        # Exclude based on directory keywords
+        
         path = file.path.lower()
         if any(excluded in path for excluded in EXCLUDED_DIR_KEYWORDS):
             continue
