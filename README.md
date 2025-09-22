@@ -115,7 +115,6 @@ All tests can be run inside Docker containers without installing extra tools loc
 
 <br><br>
 
-<br><br>
 
 ### Machine Learning
 
