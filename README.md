@@ -1,4 +1,4 @@
-
+<!-- <img width="3070" height="1106" alt="image" src="https://github.com/user-attachments/assets/88e1779b-b597-401d-9659-b744f8fbdb7d" /> -->
 <img src="./readme/title1.svg"/>
 
 <br><br>
@@ -43,7 +43,11 @@ View the live ER diagram here: [Eraser Workspace](https://app.eraser.io/workspac
 - **Interactive Code Map** : instantly see how files connect through imports and dependencies.  
 - **Natural Language Q&A with AI Agent** : ask plain-English questions about any file and explore the repo with contextual answers and guidance.  
 - **Change Notifications** : stay up to date with simple alerts whenever your repository changes.  
-- **Code Stability Predictions** : machine learning highlights risky or unstable areas of the code.  
+- **Code Stability Predictions** : machine learning highlights risky or unstable areas of the code.
+
+<br><br>
+
+<img src="./readme/demo/figure.png"/>
 
 
 <br><br>
@@ -134,9 +138,30 @@ These results indicate that the model is strong at identifying non-defective fil
 <br><br>
 
 
+| Metrics Bar                          | 
+| --------------------------------------- | 
+| ![Landing](./readme/demo/metrics_bar.png) | 
+
+<br><br>
+
 | Confusion Matrix                          | ROC Curve                      |
 | --------------------------------------- | ------------------------------------- |
 | ![Landing](./readme/demo/confusion_matrix.png) | ![fsdaf](./readme/demo/roc_curve.png) |
+
+
+<br><br>
+
+
+
+### n8n Workflow
+
+This workflow automatically checks watched GitHub repositories on a schedule, retrieves the latest **commit** information, and **compares** it with the stored commit reference. If new commits are found, it **updates** the record and sends a **notification** to the user, ensuring users are always informed about changes in their repositories.
+<br><br>
+
+
+| Workflow                         | 
+| --------------------------------------- | 
+| ![Landing](./readme/demo/n8n.png) | 
 
 <br><br>
 
@@ -147,7 +172,7 @@ These results indicate that the model is strong at identifying non-defective fil
 
 
 
-| API 1                            | API 2                       | API 3                        |
+| POST Add a GitHub repository            | GET code map data                     | POST Predict defects for repository files          |
 | --------------------------------------- | ------------------------------------- | ------------------------------------- |
 | ![Landing](./readme/demo/api_01.png) | ![fsdaf](./readme/demo/api_02.png) | ![fsdaf](./readme/demo/api_03.png) |
 
