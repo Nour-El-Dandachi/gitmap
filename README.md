@@ -103,6 +103,10 @@ All tests can be run inside Docker containers without installing extra tools loc
 
 <br><br>
 
+| Frontend Tests                          | Backend Tests                      |
+| --------------------------------------- | ------------------------------------- |
+| ![Landing](./readme/demo/frontend-tests.png) | ![fsdaf](./readme/demo/image.png) |
+<br><br>
 ### AI Agent
 
 **Simple Inputs:** The user just provides a GitHub repository URL.
@@ -179,6 +183,12 @@ This workflow automatically checks watched GitHub repositories on a schedule, re
 <br><br>
 
 ### Linear Board
+
+I used **Linear** to stay organized and manage my workflow as a solo developer. Each task followed a clear cycle:
+
+Create Ticket → Create Branch (Linear standard) → Make Commits (with task ID) → Push → Open Pull Request → Merge Pull Request
+
+This kept my work structured and traceable from start to finish.
 
 | Board                        |
 | --------------------------------------- |
