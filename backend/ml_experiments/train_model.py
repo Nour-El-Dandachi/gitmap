@@ -43,12 +43,10 @@ clf.fit(X_train, y_train)
 y_pred = clf.predict(X_test)
 print("Accuracy:", accuracy_score(y_test, y_pred))
 
-# Save model + features
 joblib.dump(clf, MODEL_PATH)
 with open(FEATURES_PATH, "w") as f:
     json.dump(list(clf.feature_names_in_), f)
 
-# Metrics and visualizations
 from sklearn.metrics import (
     classification_report, confusion_matrix,
     precision_score, recall_score, f1_score, RocCurveDisplay
@@ -114,3 +112,17 @@ with open(ARTIFACT_DIR / "metrics.json", "w") as f:
     json.dump(metrics, f, indent=4)
 
 print("\nSaved metrics:", metrics)
+
+labels = ["Accuracy", "Precision", "Recall", "F1 Score"]
+values = [metrics["accuracy"], metrics["precision"], metrics["recall"], metrics["f1"]]
+
+plt.figure(figsize=(6,4))
+plt.bar(labels, values, color=["#948BFC","#7E6DFB","#5B4DE0","#3C2EB5"])
+plt.ylim(0,1)
+plt.title("Model Performance Metrics")
+plt.ylabel("Score")
+for i, v in enumerate(values):
+    plt.text(i, v + 0.02, f"{v:.2f}", ha="center", fontweight="bold")
+plt.savefig(ARTIFACT_DIR / "metrics_bar.png", facecolor="white")
+plt.close()
+
