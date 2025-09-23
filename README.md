@@ -22,7 +22,7 @@
 
 View the live ER diagram here: [Eraser Workspace](https://app.eraser.io/workspace/NIzKPZnY8ZkSBtb8iS99?origin=share)
 
-<img src="./readme/system-design/er-diagram.png" width="600"/>
+<img src="./readme/system-design/er_diagram.png"/>
 
 
 
