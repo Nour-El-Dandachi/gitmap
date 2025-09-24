@@ -22,15 +22,18 @@
 
 View the live ER diagram here: [Eraser Workspace](https://app.eraser.io/workspace/NIzKPZnY8ZkSBtb8iS99?origin=share)
 
-<img src="./readme/system-design/er_diagram.png"/>
+<p align="center">
+  <img src="./readme/system-design/er_diagram.png" width="800px"/>
+</p>
 
 
 
 
 
 ### System Architecture
-
-<img src="./readme/system-design/system-architecture.png"/>
+<p align="center">
+  <img src="./readme/system-design/system-architecture.png" width="800px"/>
+</p>
 
 <br><br>
 
